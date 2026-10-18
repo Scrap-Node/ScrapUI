@@ -16,11 +16,11 @@ import { ScrapIdGenerator } from './id';
 import { ScrapScrollLock } from './scroll-lock';
 
 /**
- * Modale : plaque désaxée qui claque façon tampon, overlay grainé.
+ * Modale : une décision qui bloque la suite.
  *
  * ```html
- * <scrap-modal [(open)]="showModal" title="Confirmer">
- *   contenu…
+ * <scrap-modal [(open)]="showModal" title="Supprimer la session ?">
+ *   Les trois passes et l'export seront effacés.
  *   <div actions>…boutons…</div>
  * </scrap-modal>
  * ```
@@ -39,90 +39,27 @@ import { ScrapScrollLock } from './scroll-lock';
     <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
     <dialog
       #dialog
+      class="scrap-dialog"
       [attr.aria-labelledby]="titleId"
       (close)="open.set(false)"
       (click)="onClick($event)"
     >
-      <div class="plate scrap-stamp-in">
-        <div class="head">
-          <h3 [id]="titleId">{{ title() }}</h3>
-          <button type="button" class="x" aria-label="Fermer" (click)="dismiss()">
+      <div class="scrap-dialog__panel">
+        <div class="scrap-dialog__head">
+          <h2 class="scrap-dialog__title" [id]="titleId">{{ title() }}</h2>
+          <button
+            type="button"
+            class="scrap-icon-btn scrap-dialog__close"
+            aria-label="Fermer"
+            (click)="dismiss()"
+          >
             <scrap-icon name="close" [size]="18" />
           </button>
         </div>
-        <div class="body">
-          <ng-content />
-        </div>
-        <div class="actions">
-          <ng-content select="[actions]" />
-        </div>
+        <div class="scrap-dialog__body"><ng-content /></div>
+        <div class="scrap-dialog__actions"><ng-content select="[actions]" /></div>
       </div>
     </dialog>
-  `,
-  styles: `
-    dialog {
-      padding: 0;
-      border: none;
-      background: transparent;
-      max-width: min(520px, calc(100vw - 2 * var(--scrap-space-4)));
-      max-height: calc(100vh - 2 * var(--scrap-space-4));
-      overflow: visible;
-      color: var(--scrap-ink);
-    }
-    dialog::backdrop {
-      background: rgb(0 0 0 / 0.55);
-    }
-    .plate {
-      background: var(--scrap-surface);
-      border: var(--scrap-border-w) solid var(--scrap-border);
-      box-shadow: 8px 8px 0 rgb(0 0 0 / 0.6);
-      rotate: -1deg;
-    }
-    .head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--scrap-space-2) var(--scrap-space-3);
-      background: var(--scrap-ink-strong);
-    }
-    .head h3 {
-      margin: 0;
-      color: var(--scrap-bg);
-      font-size: var(--scrap-fs-small);
-      letter-spacing: 0.1em;
-    }
-    .x {
-      background: none;
-      border: none;
-      color: var(--scrap-copper);
-      cursor: pointer;
-      padding: 2px;
-      display: inline-flex;
-    }
-    .x:hover {
-      color: var(--scrap-bg);
-    }
-    .x:focus-visible {
-      outline: 3px dashed var(--scrap-secondary);
-      outline-offset: 2px;
-    }
-    .body {
-      padding: var(--scrap-space-4);
-    }
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: var(--scrap-space-3);
-      padding: 0 var(--scrap-space-4) var(--scrap-space-4);
-    }
-    .actions:empty {
-      display: none;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .plate {
-        rotate: none;
-      }
-    }
   `,
 })
 export class ScrapModal {
@@ -165,7 +102,7 @@ export class ScrapModal {
     this.open.set(false);
   }
 
-  /** Clic sur le fond : la cible est le <dialog> lui-même, pas la plaque. */
+  /** Clic sur le fond : la cible est le <dialog> lui-même, pas son panneau. */
   protected onClick(event: MouseEvent): void {
     if (event.target === this.dialog()?.nativeElement) this.dismiss();
   }

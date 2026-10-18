@@ -59,14 +59,14 @@ describe('ScrapSlider', () => {
     fixture.componentRef.setInput('max', 9);
     await fixture.whenStable();
     expect(
-      [...fixture.nativeElement.querySelectorAll('.bound')].map((e: Element) =>
+      [...fixture.nativeElement.querySelectorAll('.scrap-slider__bound')].map((e: Element) =>
         e.textContent?.trim(),
       ),
     ).toEqual(['3', '9']);
 
     fixture.componentRef.setInput('showBounds', false);
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelectorAll('.bound')).toHaveLength(0);
+    expect(fixture.nativeElement.querySelectorAll('.scrap-slider__bound')).toHaveLength(0);
   });
 
   it('déduit le nombre de crans du pas quand il reste raisonnable', async () => {
@@ -74,14 +74,14 @@ describe('ScrapSlider', () => {
     fixture.componentRef.setInput('step', 10);
     await fixture.whenStable();
     // 100 / 10 = 10 intervalles, donc 11 crans.
-    expect(fixture.nativeElement.querySelectorAll('.tick')).toHaveLength(11);
+    expect(fixture.nativeElement.querySelectorAll('.scrap-slider__tick')).toHaveLength(11);
   });
 
   it('retombe sur 10 intervalles quand le pas en produirait trop', async () => {
     fixture.componentRef.setInput('ticks', true);
     fixture.componentRef.setInput('step', 1);
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelectorAll('.tick')).toHaveLength(11);
+    expect(fixture.nativeElement.querySelectorAll('.scrap-slider__tick')).toHaveLength(11);
   });
 
   it('marque les crans déjà franchis', async () => {
@@ -89,7 +89,7 @@ describe('ScrapSlider', () => {
     fixture.componentRef.setInput('step', 25);
     fixture.componentInstance.value.set(50);
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelectorAll('.tick.on')).toHaveLength(3);
+    expect(fixture.nativeElement.querySelectorAll('.scrap-slider__tick.on')).toHaveLength(3);
   });
 
   it('désactive le contrôle et vide le remplissage', async () => {
@@ -98,13 +98,54 @@ describe('ScrapSlider', () => {
     await fixture.whenStable();
     expect(range(fixture).disabled).toBe(true);
     expect(range(fixture).style.getPropertyValue('--fill')).toBe('0');
-    expect(fixture.nativeElement.classList.contains('disabled')).toBe(true);
+    expect(fixture.nativeElement.classList.contains('scrap-slider--disabled')).toBe(true);
   });
 
   it("expose l'étiquette accessible", async () => {
     fixture.componentRef.setInput('label', 'Volume');
     await fixture.whenStable();
     expect(range(fixture).getAttribute('aria-label')).toBe('Volume');
+  });
+
+  it("n'affiche ni étiquette ni valeur par défaut", () => {
+    expect(fixture.nativeElement.querySelector('.scrap-slider__top')).toBeNull();
+    expect(fixture.nativeElement.querySelector('output')).toBeNull();
+  });
+
+  it("affiche l'étiquette et la valeur avec son unité", async () => {
+    fixture.componentRef.setInput('label', 'Densité');
+    fixture.componentRef.setInput('showValue', true);
+    fixture.componentRef.setInput('unit', '%');
+    fixture.componentInstance.value.set(35);
+    await fixture.whenStable();
+
+    const top = fixture.nativeElement.querySelector('.scrap-slider__top') as HTMLElement;
+    const label = top.querySelector('span') as HTMLElement;
+    const output = top.querySelector('output') as HTMLOutputElement;
+    expect(label.textContent?.trim()).toBe('Densité');
+    expect(output.textContent?.trim()).toBe('35\u00a0%');
+    expect(output.getAttribute('for')).toBe(range(fixture).id);
+    // L'étiquette visible nomme le contrôle : pas de doublon en aria-label.
+    expect(range(fixture).getAttribute('aria-labelledby')).toBe(label.id);
+    expect(range(fixture).getAttribute('aria-label')).toBeNull();
+  });
+
+  it('annonce la valeur avec son unité, en français', async () => {
+    fixture.componentRef.setInput('unit', 's');
+    fixture.componentRef.setInput('step', 0.5);
+    fixture.componentInstance.value.set(2.5);
+    await fixture.whenStable();
+    expect(range(fixture).getAttribute('aria-valuetext')).toBe('2,5\u00a0s');
+  });
+
+  it('met les bornes au format français', async () => {
+    fixture.componentRef.setInput('min', 0.25);
+    fixture.componentRef.setInput('max', 12000);
+    await fixture.whenStable();
+    const bounds = [...fixture.nativeElement.querySelectorAll('.scrap-slider__bound')].map(
+      (e: Element) => e.textContent?.trim(),
+    );
+    expect(bounds).toEqual(['0,25', '12\u00a0000']);
   });
 });
 

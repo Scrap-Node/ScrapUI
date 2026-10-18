@@ -18,31 +18,19 @@ import { ScrapIdGenerator } from './id';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (active()) {
-      <div class="scrap-stamp-in"><ng-content /></div>
+      <ng-content />
     }
   `,
   host: {
+    class: 'scrap-tabpanel',
     role: 'tabpanel',
     '[id]': 'panelId',
     '[attr.aria-labelledby]': 'tabId',
+    // `.scrap-tabpanel[hidden]` est masqué par la feuille de la lib : un
+    // panneau inactif n'est pas exposé comme tabpanel aux lecteurs d'écran.
     '[attr.hidden]': 'active() ? null : ""',
     '[attr.tabindex]': 'active() ? 0 : null',
   },
-  styles: `
-    :host {
-      display: block;
-    }
-    /* La règle [hidden] { display: none } vient de la feuille du navigateur,
-       qu'un display posé par l'auteur écrase. Sans cette ligne, les panneaux
-       inactifs restent exposés comme tabpanel aux lecteurs d'écran. */
-    :host([hidden]) {
-      display: none;
-    }
-    :host(:focus-visible) {
-      outline: 3px dashed var(--scrap-secondary);
-      outline-offset: 3px;
-    }
-  `,
 })
 export class ScrapTab {
   readonly label = input.required<string>();
@@ -65,12 +53,13 @@ export class ScrapTab {
 }
 
 /**
- * Onglets façon étiquettes de classeur métallique.
+ * Onglets : plusieurs vues d'un même objet, l'onglet actif souligné à
+ * l'encre.
  *
  * ```html
- * <scrap-tabs label="Fiche pièce">
- *   <scrap-tab label="Détails">…</scrap-tab>
- *   <scrap-tab label="Notes">…</scrap-tab>
+ * <scrap-tabs label="Fiche de session">
+ *   <scrap-tab label="Propriétés">…</scrap-tab>
+ *   <scrap-tab label="Historique">…</scrap-tab>
  * </scrap-tabs>
  * ```
  *
@@ -84,81 +73,31 @@ export class ScrapTab {
     <!-- Le keydown est délégué : ce sont les boutons enfants qui portent le
          focus, la barre elle-même ne doit pas entrer dans l'ordre de tabulation. -->
     <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
-    <div role="tablist" class="rail" [attr.aria-label]="label()" (keydown)="onKeydown($event)">
+    <div
+      role="tablist"
+      class="scrap-tablist"
+      [attr.aria-label]="label()"
+      (keydown)="onKeydown($event)"
+    >
       @for (tab of tabs(); track tab.panelId; let i = $index) {
         <button
           #tabButton
+          class="scrap-tab"
           role="tab"
           type="button"
           [id]="tab.tabId"
           [attr.aria-selected]="i === selectedIndex()"
           [attr.aria-controls]="tab.panelId"
           [attr.tabindex]="i === selectedIndex() ? 0 : -1"
-          [class.on]="i === selectedIndex()"
           (click)="select(i)"
         >
           {{ tab.label() }}
         </button>
       }
     </div>
-    <div class="panel">
-      <ng-content />
-    </div>
+    <ng-content />
   `,
-  styles: `
-    :host {
-      display: block;
-    }
-    .rail {
-      display: flex;
-      gap: var(--scrap-space-2);
-      flex-wrap: wrap;
-      padding: 0 var(--scrap-space-2);
-    }
-    button {
-      font-family: var(--scrap-font-display);
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      font-size: var(--scrap-fs-small);
-      padding: 0.55em 1.1em;
-      background: var(--scrap-bg-alt);
-      color: var(--scrap-ink-muted);
-      border: var(--scrap-border-w) solid var(--scrap-border);
-      border-bottom: none;
-      border-radius: var(--scrap-radius) var(--scrap-radius) 0 0;
-      cursor: pointer;
-      transform: translateY(2px);
-      transition:
-        transform var(--scrap-transition),
-        background var(--scrap-transition);
-    }
-    button:hover {
-      color: var(--scrap-ink);
-    }
-    button.on {
-      background: var(--scrap-surface);
-      color: var(--scrap-ink-strong);
-      transform: translateY(var(--scrap-border-w));
-      position: relative;
-      z-index: 1;
-    }
-    button:focus-visible {
-      outline: 3px dashed var(--scrap-secondary);
-      outline-offset: 2px;
-    }
-    .panel {
-      background: var(--scrap-surface);
-      border: var(--scrap-border-w) solid var(--scrap-border);
-      box-shadow: var(--scrap-shadow);
-      padding: var(--scrap-space-4);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      button {
-        transition: none;
-      }
-    }
-  `,
+  host: { class: 'scrap-tabs' },
 })
 export class ScrapTabs {
   /** Étiquette du groupe d'onglets, annoncée par les lecteurs d'écran. */

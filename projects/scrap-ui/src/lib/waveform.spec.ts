@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ScrapVuMeter, ScrapWaveBars, ScrapWaveLine } from './waveform';
+import { SCRAP_LANE, ScrapVuMeter, ScrapWaveBars, ScrapWaveLine } from './waveform';
 
 describe('ScrapWaveBars', () => {
   let fixture: ComponentFixture<ScrapWaveBars>;
 
   const rects = () => [...fixture.nativeElement.querySelectorAll('rect')] as SVGRectElement[];
+  const bars = () => rects().filter((r) => !r.classList.contains('scrap-wave__head'));
   const svg = () => fixture.nativeElement.querySelector('svg') as SVGSVGElement;
 
   beforeEach(async () => {
@@ -48,8 +49,21 @@ describe('ScrapWaveBars', () => {
     await fixture.whenStable();
     const all = rects();
     expect(all).toHaveLength(4); // 3 barres + la tête de lecture
-    const played = all.slice(0, 3).filter((r) => r.getAttribute('fill')?.includes('accent'));
+    expect(all[3].classList.contains('scrap-wave__head')).toBe(true);
+    const played = bars().filter((r) => r.classList.contains('is-played'));
     expect(played).toHaveLength(2);
+  });
+
+  it('marque les barres des plages altérées', async () => {
+    fixture.componentRef.setInput('data', [0.5, 0.5, 0.5, 0.5]);
+    fixture.componentRef.setInput('altered', [[0.25, 0.75]]);
+    await fixture.whenStable();
+    expect(bars().map((r) => r.classList.contains('is-altered'))).toEqual([
+      false,
+      true,
+      true,
+      false,
+    ]);
   });
 
   it('expose la position en pourcentage', async () => {
@@ -111,6 +125,34 @@ describe('ScrapWaveBars', () => {
   });
 });
 
+describe('ScrapWaveBars dans une piste de timeline', () => {
+  let fixture: ComponentFixture<ScrapWaveBars>;
+  const svg = () => fixture.nativeElement.querySelector('svg') as SVGSVGElement;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({ providers: [{ provide: SCRAP_LANE, useValue: true }] });
+    fixture = TestBed.createComponent(ScrapWaveBars);
+    fixture.componentRef.setInput('data', [0.2, 0.6, 1]);
+    fixture.componentRef.setInput('progress', 0.5);
+    await fixture.whenStable();
+  });
+
+  it("n'est plus qu'un rendu : la piste gère le pointeur et le clavier", async () => {
+    expect(svg().classList.contains('is-static')).toBe(true);
+    expect(svg().getAttribute('role')).toBeNull();
+    expect(svg().getAttribute('tabindex')).toBeNull();
+    expect(svg().getAttribute('aria-hidden')).toBe('true');
+
+    const emitted: number[] = [];
+    const sub = fixture.componentInstance.seek.subscribe((v) => emitted.push(v));
+    svg().dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+    svg().dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await fixture.whenStable();
+    sub.unsubscribe();
+    expect(emitted).toEqual([]);
+  });
+});
+
 describe('ScrapWaveLine', () => {
   let fixture: ComponentFixture<ScrapWaveLine>;
 
@@ -149,7 +191,8 @@ describe('ScrapWaveLine', () => {
 describe('ScrapVuMeter', () => {
   let fixture: ComponentFixture<ScrapVuMeter>;
 
-  const segments = () => [...fixture.nativeElement.querySelectorAll('.seg')] as HTMLElement[];
+  const segments = () =>
+    [...fixture.nativeElement.querySelectorAll('.scrap-vu i')] as HTMLElement[];
   const lit = () => segments().filter((s) => s.classList.contains('on'));
 
   beforeEach(async () => {
@@ -159,7 +202,7 @@ describe('ScrapVuMeter', () => {
   });
 
   it('rend le nombre de segments demandé', async () => {
-    expect(segments()).toHaveLength(14);
+    expect(segments()).toHaveLength(24);
     fixture.componentRef.setInput('count', 20);
     await fixture.whenStable();
     expect(segments()).toHaveLength(20);
@@ -172,7 +215,7 @@ describe('ScrapVuMeter', () => {
   it('allume tout au maximum', async () => {
     fixture.componentRef.setInput('level', 1);
     await fixture.whenStable();
-    expect(lit()).toHaveLength(14);
+    expect(lit()).toHaveLength(24);
   });
 
   it('allume proportionnellement au niveau', async () => {
@@ -185,10 +228,13 @@ describe('ScrapVuMeter', () => {
   it('échelonne les couleurs mousse → ocre → rouille', async () => {
     fixture.componentRef.setInput('count', 20);
     await fixture.whenStable();
-    const colors = segments().map((s) => s.style.getPropertyValue('--seg-color'));
-    expect(colors[0]).toContain('success');
-    expect(colors[14]).toContain('warning');
-    expect(colors[19]).toContain('danger');
+    const zone = (s: HTMLElement) =>
+      s.classList.contains('clip') ? 'rouille' : s.classList.contains('hot') ? 'ocre' : 'mousse';
+    const zones = segments().map(zone);
+    expect(zones[0]).toBe('mousse');
+    expect(zones[11]).toBe('mousse');
+    expect(zones[14]).toBe('ocre');
+    expect(zones[19]).toBe('rouille');
   });
 
   it('expose son niveau en tant que meter', async () => {

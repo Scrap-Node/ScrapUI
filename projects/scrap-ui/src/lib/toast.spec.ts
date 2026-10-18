@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ScrapToast } from './toast';
+import { ScrapToast, ScrapToasts } from './toast';
 
 describe('ScrapToast', () => {
   let svc: ScrapToast;
@@ -119,9 +119,101 @@ describe('ScrapToast', () => {
     expect(svc.items()).toHaveLength(0);
   });
 
+  it('accepte ses options sous forme d’objet', () => {
+    svc.show('Court', 'info', { duration: 500 });
+    vi.advanceTimersByTime(500);
+    expect(svc.items()).toHaveLength(0);
+  });
+
+  it('laisse plus de temps quand le toast propose une action', () => {
+    svc.show('Passe appliquée', 'success', { action: { label: 'Annuler', run: () => undefined } });
+    vi.advanceTimersByTime(5999);
+    expect(svc.items()).toHaveLength(1);
+    vi.advanceTimersByTime(1);
+    expect(svc.items()).toHaveLength(0);
+  });
+
+  it("lance l'action puis ferme le toast", () => {
+    const run = vi.fn();
+    const id = svc.show('Passe appliquée', 'success', { action: { label: 'Annuler', run } });
+    svc.act(id);
+    expect(run).toHaveBeenCalledOnce();
+    expect(svc.items()).toHaveLength(0);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("ferme le toast avant de lancer l'action", () => {
+    // L'action peut afficher un autre toast : il ne doit pas évincer le suivant.
+    const id = svc.show('Supprimé', 'info', {
+      action: { label: 'Annuler', run: () => expect(svc.items()).toHaveLength(0) },
+    });
+    svc.act(id);
+  });
+
+  it('ignore une action sur un toast déjà fermé', () => {
+    const run = vi.fn();
+    const id = svc.show('Éphémère', 'info', { duration: 100, action: { label: 'Annuler', run } });
+    vi.advanceTimersByTime(100);
+    svc.act(id);
+    expect(run).not.toHaveBeenCalled();
+  });
+
   it("coupe les minuteries à la destruction de l'application", () => {
     svc.show('a', 'info', 5000);
     TestBed.resetTestingModule();
     expect(vi.getTimerCount()).toBe(0);
+  });
+});
+
+describe('ScrapToasts', () => {
+  const setup = async () => {
+    TestBed.resetTestingModule();
+    const fixture = TestBed.createComponent(ScrapToasts);
+    const svc = TestBed.inject(ScrapToast);
+    await fixture.whenStable();
+    const host = fixture.nativeElement as HTMLElement;
+    const [urgent, routine] = [...host.querySelectorAll('.scrap-toasts__region')] as HTMLElement[];
+    return { fixture, svc, host, urgent, routine };
+  };
+
+  it('range les erreurs dans la région assertive, le reste dans la région polie', async () => {
+    const { fixture, svc, urgent, routine } = await setup();
+    expect(urgent.getAttribute('aria-live')).toBe('assertive');
+    expect(routine.getAttribute('aria-live')).toBe('polite');
+
+    svc.show('Export impossible', 'danger', 0);
+    svc.show('Enregistré', 'success', 0);
+    await fixture.whenStable();
+    expect(urgent.querySelector('.scrap-toast--danger')?.textContent).toContain(
+      'Export impossible',
+    );
+    expect(routine.querySelector('.scrap-toast--success')?.textContent).toContain('Enregistré');
+  });
+
+  it("affiche le bouton d'action et le relie au service", async () => {
+    const { fixture, svc, host } = await setup();
+    const run = vi.fn();
+    svc.show('Passe appliquée', 'success', { duration: 0, action: { label: 'Annuler', run } });
+    await fixture.whenStable();
+
+    const action = host.querySelector('.scrap-toast__action') as HTMLButtonElement;
+    expect(action.textContent?.trim()).toBe('Annuler');
+    action.click();
+    await fixture.whenStable();
+    expect(run).toHaveBeenCalledOnce();
+    expect(host.querySelector('.scrap-toast')).toBeNull();
+  });
+
+  it('ferme un toast par son bouton', async () => {
+    const { fixture, svc, host } = await setup();
+    svc.show('Enregistré', 'success', 0);
+    await fixture.whenStable();
+    expect(host.querySelector('.scrap-toast__action')).toBeNull();
+
+    const close = host.querySelector('.scrap-toast__close') as HTMLButtonElement;
+    expect(close.getAttribute('aria-label')).toBe('Fermer');
+    close.click();
+    await fixture.whenStable();
+    expect(svc.items()).toHaveLength(0);
   });
 });

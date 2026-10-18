@@ -15,7 +15,10 @@ export type ScrapSplatName = keyof typeof SPLATS;
 export const SCRAP_SPLAT_NAMES = Object.keys(SPLATS) as ScrapSplatName[];
 
 /**
- * Élément décoratif : éclaboussure/griffure à poser en fond de section.
+ * Élément décoratif du module Affiche : éclaboussure ou griffure à poser en
+ * fond de section. Ses réglages d'affichage viennent de la feuille Affiche
+ * (`@use '@comechaslerie/scrap-ui/styles/affiche'`).
+ *
  * <scrap-splat name="burst" [size]="140" style="color: var(--scrap-copper)" />
  */
 @Component({
@@ -31,13 +34,6 @@ export const SCRAP_SPLAT_NAMES = Object.keys(SPLATS) as ScrapSplatName[];
   >
     <path [attr.d]="path()" />
   </svg>`,
-  styles: `
-    :host {
-      display: inline-flex;
-      pointer-events: none;
-      opacity: 0.85;
-    }
-  `,
 })
 export class ScrapSplat {
   readonly name = input<ScrapSplatName>('burst');

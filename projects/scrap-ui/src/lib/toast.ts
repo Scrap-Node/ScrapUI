@@ -7,13 +7,27 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ScrapIcon } from './icon';
+import { NgTemplateOutlet } from '@angular/common';
+import { ScrapIcon, type ScrapIconName } from './icon';
 import type { ScrapTone } from './badge';
+
+/** Une action proposée dans le toast, « Annuler » le plus souvent. */
+export interface ScrapToastAction {
+  readonly label: string;
+  readonly run: () => void;
+}
+
+export interface ScrapToastOptions {
+  /** Durée d'affichage en millisecondes ; 0 garde le toast jusqu'à sa fermeture. */
+  readonly duration?: number;
+  readonly action?: ScrapToastAction;
+}
 
 export interface ScrapToastItem {
   id: number;
   message: string;
   tone: ScrapTone;
+  action?: ScrapToastAction;
 }
 
 /** Au-delà, les plus anciens sont retirés : une pile de 20 toasts ne sert personne. */
@@ -59,8 +73,25 @@ export class ScrapToast {
     inject(DestroyRef).onDestroy(() => this.clear());
   }
 
-  show(message: string, tone: ScrapTone = 'info', durationMs = 3500): number {
-    const item: ScrapToastItem = { id: this.nextId++, message, tone };
+  /**
+   * Affiche un toast et renvoie son identifiant.
+   *
+   * ```ts
+   * toast.show('Enregistré', 'success');
+   * toast.show('Passe 4 appliquée', 'success', {
+   *   action: { label: 'Annuler', run: () => this.undo() },
+   * });
+   * ```
+   */
+  show(
+    message: string,
+    tone: ScrapTone = 'info',
+    durationOrOptions: number | ScrapToastOptions = 3500,
+  ): number {
+    const options: ScrapToastOptions =
+      typeof durationOrOptions === 'number' ? { duration: durationOrOptions } : durationOrOptions;
+    const durationMs = options.duration ?? (options.action ? 6000 : 3500);
+    const item: ScrapToastItem = { id: this.nextId++, message, tone, action: options.action };
     this.state.update((list) => [...list, item].slice(-MAX_VISIBLE));
 
     // Le `slice` a pu évincer des toasts : leurs minuteries n'ont plus d'objet.
@@ -70,6 +101,13 @@ export class ScrapToast {
 
     if (durationMs > 0) this.startTimer(item.id, durationMs);
     return item.id;
+  }
+
+  /** Lance l'action du toast puis le ferme. */
+  act(id: number): void {
+    const item = this.state().find((t) => t.id === id);
+    this.close(id);
+    item?.action?.run();
   }
 
   close(id: number): void {
@@ -128,8 +166,16 @@ export class ScrapToast {
   }
 }
 
+const TONE_ICON: Record<ScrapTone, ScrapIconName> = {
+  neutral: 'info',
+  info: 'info',
+  success: 'check-circle',
+  warning: 'warning',
+  danger: 'x-circle',
+};
+
 /**
- * Zone d'affichage des toasts — tampons qui claquent en bas à droite.
+ * Zone d'affichage des toasts, en bas au centre de l'écran.
  *
  * Deux régions live distinctes : les messages `danger` sont annoncés en
  * `assertive`, les autres en `polite`. Imbriquer une seule région et y
@@ -137,118 +183,54 @@ export class ScrapToast {
  */
 @Component({
   selector: 'scrap-toasts',
-  imports: [ScrapIcon],
+  imports: [ScrapIcon, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    class: 'scrap-toasts',
     '(mouseenter)': 'svc.pause()',
     '(mouseleave)': 'svc.resume()',
     '(focusin)': 'svc.pause()',
     '(focusout)': 'svc.resume()',
   },
   template: `
-    <div class="region" role="alert" aria-live="assertive">
+    <div class="scrap-toasts__region" role="alert" aria-live="assertive">
       @for (t of urgent(); track t.id) {
-        <div class="toast" [class]="t.tone">
-          <span>{{ t.message }}</span>
-          <button type="button" aria-label="Fermer" (click)="svc.close(t.id)">
-            <scrap-icon name="close" [size]="14" />
-          </button>
-        </div>
+        <ng-container *ngTemplateOutlet="toast; context: { $implicit: t }" />
       }
     </div>
-    <div class="region" role="status" aria-live="polite">
+    <div class="scrap-toasts__region" role="status" aria-live="polite">
       @for (t of routine(); track t.id) {
-        <div class="toast" [class]="t.tone">
-          <span>{{ t.message }}</span>
-          <button type="button" aria-label="Fermer" (click)="svc.close(t.id)">
-            <scrap-icon name="close" [size]="14" />
-          </button>
-        </div>
+        <ng-container *ngTemplateOutlet="toast; context: { $implicit: t }" />
       }
     </div>
-  `,
-  styles: `
-    :host {
-      position: fixed;
-      right: var(--scrap-space-4);
-      bottom: var(--scrap-space-4);
-      z-index: 200;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: var(--scrap-space-2);
-      pointer-events: none;
-    }
-    .region {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: var(--scrap-space-2);
-    }
-    .region:empty {
-      display: none;
-    }
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: var(--scrap-space-3);
-      font-family: var(--scrap-font-display);
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: var(--scrap-fs-small);
-      padding: 0.7em 1.2em;
-      border: var(--scrap-border-w) solid var(--scrap-border);
-      background: var(--scrap-surface);
-      color: var(--scrap-ink-strong);
-      box-shadow: var(--scrap-shadow);
-      rotate: -1.5deg;
-      animation: scrap-stamp-in 320ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-    }
-    .toast button {
-      display: inline-flex;
-      padding: 0;
-      background: none;
-      border: none;
-      color: inherit;
-      cursor: pointer;
-      opacity: 0.6;
-    }
-    .toast button:hover {
-      opacity: 1;
-    }
-    .toast button:focus-visible {
-      outline: 2px dashed currentColor;
-      outline-offset: 2px;
-      opacity: 1;
-    }
-    .toast.info {
-      border-color: var(--scrap-info);
-      color: var(--scrap-info);
-    }
-    .toast.success {
-      border-color: var(--scrap-success);
-      color: var(--scrap-success);
-    }
-    .toast.warning {
-      border-color: var(--scrap-warning);
-      color: var(--scrap-warning);
-    }
-    .toast.danger {
-      border-color: var(--scrap-danger);
-      color: var(--scrap-danger);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .toast {
-        rotate: none;
-        animation: none;
-      }
-    }
+
+    <ng-template #toast let-t>
+      <div class="scrap-toast scrap-toast--{{ t.tone }}">
+        <scrap-icon class="scrap-toast__icon" [name]="icon(t.tone)" />
+        <span class="scrap-toast__text">{{ t.message }}</span>
+        @if (t.action) {
+          <button type="button" class="scrap-toast__action" (click)="svc.act(t.id)">
+            {{ t.action.label }}
+          </button>
+        }
+        <button
+          type="button"
+          class="scrap-toast__close"
+          aria-label="Fermer"
+          (click)="svc.close(t.id)"
+        >
+          <scrap-icon name="close" [size]="14" />
+        </button>
+      </div>
+    </ng-template>
   `,
 })
 export class ScrapToasts {
   protected readonly svc = inject(ScrapToast);
   protected readonly urgent = computed(() => this.svc.items().filter((t) => t.tone === 'danger'));
   protected readonly routine = computed(() => this.svc.items().filter((t) => t.tone !== 'danger'));
+
+  protected icon(tone: ScrapTone): ScrapIconName {
+    return TONE_ICON[tone];
+  }
 }

@@ -4,43 +4,21 @@ import { ScrapTheme } from './theme';
 
 /**
  * Bascule clair/sombre. L'état vit dans le service {@link ScrapTheme} :
- * plusieurs boutons dans la même page restent synchronisés.
+ * plusieurs bascules dans la même page restent synchronisées.
  */
 @Component({
   selector: 'scrap-theme-toggle',
   imports: [ScrapIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <button type="button" (click)="theme.toggle()" [attr.aria-label]="label()">
-      <scrap-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" [size]="18" />
+    <button
+      class="scrap-icon-btn"
+      type="button"
+      (click)="theme.toggle()"
+      [attr.aria-label]="label()"
+    >
+      <scrap-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" />
     </button>
-  `,
-  styles: `
-    button {
-      display: inline-flex;
-      padding: 0.5em;
-      background: transparent;
-      color: inherit;
-      border: var(--scrap-border-w) solid currentColor;
-      border-radius: var(--scrap-radius);
-      cursor: pointer;
-      transform: rotate(2deg);
-      transition: transform var(--scrap-transition);
-    }
-    button:hover {
-      transform: rotate(-2deg) scale(1.05);
-    }
-    button:focus-visible {
-      outline: 3px dashed var(--scrap-secondary);
-      outline-offset: 3px;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      button,
-      button:hover {
-        transform: none;
-        transition: none;
-      }
-    }
   `,
 })
 export class ScrapThemeToggle {
