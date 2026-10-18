@@ -34,38 +34,39 @@ npm start   # construit la lib puis sert la vitrine sur http://localhost:4200
 
 ## Utilisation dans un projet
 
-La lib est publiée sur **GitHub Packages** sous `@comechaslerie/scrap-ui`. GitHub
+La lib est publiée sur **GitHub Packages** sous `@scrap-node/scrap-ui`
+(`@comechaslerie/scrap-ui` jusqu'en 0.2.0). GitHub
 Packages exige un token **même en lecture** : le projet consommateur a donc besoin d'un
 `.npmrc` routant le scope, et d'un PAT classique avec la portée `read:packages`.
 
 `.npmrc` du projet consommateur (versionné, sans le token) :
 
 ```ini
-@comechaslerie:registry=https://npm.pkg.github.com
+@scrap-node:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
 ```
 
 Puis, avec `GITHUB_PACKAGES_TOKEN` dans l'environnement (shell, CI, `--build-arg` Docker) :
 
 ```bash
-npm install @comechaslerie/scrap-ui
-ng add @comechaslerie/scrap-ui    # branche les styles dans la feuille du projet
+npm install @scrap-node/scrap-ui
+ng add @scrap-node/scrap-ui    # branche les styles dans la feuille du projet
 ```
 
 `ng add` lit `angular.json` pour trouver la bonne feuille de styles ; dans un
-workspace multi-projets, préciser la cible : `ng add @comechaslerie/scrap-ui --project mon-app`.
+workspace multi-projets, préciser la cible : `ng add @scrap-node/scrap-ui --project mon-app`.
 
 À défaut, dans `styles.scss` :
 
 ```scss
-@use '@comechaslerie/scrap-ui/styles/index';
-@use '@comechaslerie/scrap-ui/styles/affiche'; // facultatif : le module Affiche
+@use '@scrap-node/scrap-ui/styles/index';
+@use '@scrap-node/scrap-ui/styles/affiche'; // facultatif : le module Affiche
 ```
 
 ### Sans Angular
 
 Une page HTML ou une application Blazor prend la feuille compilée, livrée dans
-le paquet (`node_modules/@comechaslerie/scrap-ui/css/`) :
+le paquet (`node_modules/@scrap-node/scrap-ui/css/`) :
 
 ```html
 <link rel="stylesheet" href="css/scrap-ui.css" />
@@ -188,7 +189,7 @@ la page.
 
 ### Module Affiche
 
-Avec `@use '@comechaslerie/scrap-ui/styles/affiche'` (ou `css/scrap-ui-affiche.css`) :
+Avec `@use '@scrap-node/scrap-ui/styles/affiche'` (ou `css/scrap-ui-affiche.css`) :
 `.scrap-poster`, `.scrap-grain` (texture), `.scrap-torn-bottom` (bord déchiré),
 `.scrap-hero-title`, `.scrap-stamp` (tampon), `.scrap-rule` (trait de pinceau),
 les curseurs `.scrap-cursor-wrench`, `.scrap-cursor-marker`, `.scrap-cursor-spray`
@@ -196,7 +197,7 @@ et `.scrap-cursor-gear`, le composant `<scrap-splat>`, et les animations
 `.scrap-stamp-in`, `.scrap-reveal` et `.scrap-jitter`. Toutes neutralisées sous
 `prefers-reduced-motion`.
 
-Assets fournis (`node_modules/@comechaslerie/scrap-ui/assets/`) : `favicon.svg` et
+Assets fournis (`node_modules/@scrap-node/scrap-ui/assets/`) : `favicon.svg` et
 `manifest.webmanifest` (template, remplacer le nom du projet).
 
 ## Développer
@@ -211,7 +212,7 @@ npm run visual       # régression visuelle Playwright
 npm run verify       # tout l'enchaînement, comme la CI
 ```
 
-Le `paths` du `tsconfig.json` racine mappe `@comechaslerie/scrap-ui` → `dist/scrap-ui` :
+Le `paths` du `tsconfig.json` racine mappe `@scrap-node/scrap-ui` → `dist/scrap-ui` :
 la vitrine consomme la lib construite sans passer par npm. Pour un projet externe,
 `npm link` ou une dépendance `file:` vers `dist/scrap-ui` reste valable (avec
 `preserveSymlinks: true` et `prebundle.exclude` dans son `angular.json`).

@@ -1,12 +1,12 @@
 {
-  "name": "@comechaslerie/scrap-ui",
+  "name": "@scrap-node/scrap-ui",
   "version": "0.2.0",
   "description": "Bibliothèque d'interface des projets Scrap Node : jetons, composants Angular et feuille CSS sans framework",
   "author": "comeChaslerie",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/comeChaslerie/ScrapUI.git"
+    "url": "git+https://github.com/Scrap-Node/ScrapUI.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

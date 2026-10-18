@@ -5,7 +5,7 @@ import {
   ScrapIcon,
   ScrapThemeToggle,
   type ScrapNavLink,
-} from '@comechaslerie/scrap-ui';
+} from '@scrap-node/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 
 @Component({

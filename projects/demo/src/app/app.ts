@@ -10,7 +10,7 @@ import {
   ScrapTheme,
   ScrapThemeToggle,
   ScrapToasts,
-} from '@comechaslerie/scrap-ui';
+} from '@scrap-node/scrap-ui';
 import { STORIES, type Story } from './app.routes';
 
 interface NavGroup {

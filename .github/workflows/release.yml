@@ -1,4 +1,4 @@
-# Publication de @comechaslerie/scrap-ui sur GitHub Packages, déclenchée par un tag vX.Y.Z.
+# Publication de @scrap-node/scrap-ui sur GitHub Packages, déclenchée par un tag vX.Y.Z.
 # GITHUB_TOKEN suffit (packages: write) : aucun PAT à stocker pour publier.
 name: release
 
@@ -21,7 +21,7 @@ jobs:
           node-version: 22
           cache: npm
           registry-url: https://npm.pkg.github.com
-          scope: '@comechaslerie'
+          scope: '@scrap-node'
 
       - run: npm ci
 
