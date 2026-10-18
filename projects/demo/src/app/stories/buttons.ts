@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ScrapButton, ScrapIcon, ScrapTooltip } from '@comechaslerie/scrap-ui';
+import { ScrapButton, ScrapIcon, ScrapTooltip } from '@scrap-node/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 
 @Component({

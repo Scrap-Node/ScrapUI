@@ -5,7 +5,7 @@ import {
   ScrapProp,
   ScrapProps,
   ScrapTable,
-} from '@comechaslerie/scrap-ui';
+} from '@scrap-node/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 
 interface Pass {

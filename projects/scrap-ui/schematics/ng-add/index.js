@@ -7,7 +7,10 @@
 // le schematic dans un workspace multi-projets, et pour un projet dont le
 // sourceRoot n'est pas `src/`.
 
-const IMPORT_LINE = "@use '@comechaslerie/scrap-ui/styles/index';\n";
+const PACKAGE = '@scrap-node/scrap-ui';
+// Nom du paquet jusqu'en 0.2.0 : un projet déjà équipé garde cet import.
+const OLD_PACKAGE = '@comechaslerie/scrap-ui';
+const IMPORT_LINE = `@use '${PACKAGE}/styles/index';\n`;
 const MARKER = 'scrap-ui/styles';
 
 /** Lit angular.json et renvoie les feuilles de style globales du projet visé. */
@@ -63,7 +66,11 @@ function ngAdd(options = {}) {
     }
 
     const content = tree.read(scss).toString('utf-8');
-    if (content.includes(MARKER)) {
+    if (content.includes(`${OLD_PACKAGE}/`)) {
+      // L'ancien nom ne se résout plus une fois le paquet renommé installé.
+      tree.overwrite(scss, content.split(`${OLD_PACKAGE}/`).join(`${PACKAGE}/`));
+      context.logger.info(`✔ Imports Scrap UI de ${scss} passés à ${PACKAGE}`);
+    } else if (content.includes(MARKER)) {
       context.logger.info(`✔ Thème Scrap UI déjà présent dans ${scss}`);
     } else {
       // En tête de fichier : `@use` doit précéder toute autre règle en Sass.
@@ -72,7 +79,7 @@ function ngAdd(options = {}) {
     }
 
     context.logger.info(
-      '→ Favicon et manifest de la charte : node_modules/@comechaslerie/scrap-ui/assets/ (favicon.svg, manifest.webmanifest)',
+      `→ Favicon et manifest de la charte : node_modules/${PACKAGE}/assets/ (favicon.svg, manifest.webmanifest)`,
     );
     return tree;
   };

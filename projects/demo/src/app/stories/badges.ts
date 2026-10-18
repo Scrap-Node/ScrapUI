@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ScrapBadge, type ScrapBadgeTone } from '@comechaslerie/scrap-ui';
+import { ScrapBadge, type ScrapBadgeTone } from '@scrap-node/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 
 @Component({

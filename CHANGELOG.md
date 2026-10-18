@@ -1,6 +1,7 @@
 # Journal des modifications
 
-Toutes les évolutions notables de `@comechaslerie/scrap-ui`.
+Toutes les évolutions notables de `@scrap-node/scrap-ui`, publié sous
+`@comechaslerie/scrap-ui` jusqu'en 0.2.0.
 
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le
 versionnage respecte [SemVer](https://semver.org/lang/fr/). Pour une librairie
@@ -9,6 +10,8 @@ structure DOM qui casse les surcharges d'un projet consommateur est majeur, mêm
 si l'API TypeScript ne bouge pas.
 
 ## [Non publié]
+
+## [0.3.0] — 2026-10-18
 
 ### Ajouté
 
@@ -65,6 +68,11 @@ si l'API TypeScript ne bouge pas.
 
 ### Modifié
 
+- **Rupture** — le paquet devient `@scrap-node/scrap-ui`, publié par
+  l'organisation qui possède le dépôt. Dans un projet : remplacer la
+  dépendance et les imports, et router le scope `@scrap-node` dans `.npmrc`.
+  `ng add @scrap-node/scrap-ui` reprend l'ancien import de styles. Les
+  versions jusqu'à 0.2.0 restent disponibles sous `@comechaslerie/scrap-ui`.
 - **Rupture** — rendu : surfaces claires et filets fins, boutons en pilule,
   titres en casse de phrase, accent cuivre réservé à l'action principale. Le
   grain, les tampons, les bords déchirés et les animations d'entrée quittent
@@ -79,7 +87,7 @@ si l'API TypeScript ne bouge pas.
   `.scrap-stamp`, `.scrap-rule`, `.scrap-hero-title`, les curseurs décoratifs
   (sauf `.scrap-cursor-cross`), les animations `.scrap-stamp-in`,
   `.scrap-reveal` et `.scrap-jitter`, et l'affichage de `<scrap-splat>`
-  demandent désormais `@use '@comechaslerie/scrap-ui/styles/affiche'`.
+  demandent désormais `@use '@scrap-node/scrap-ui/styles/affiche'`.
 - **Rupture** — la feuille est rangée en couches (`@layer scrap.tokens`,
   `scrap.base`, `scrap.components`, `scrap.affiche`) : le CSS d'un projet, hors
   couche, l'emporte toujours, sans `!important`.

@@ -1,11 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import {
-  ScrapBadge,
-  ScrapButton,
-  ScrapCard,
-  ScrapIcon,
-  ScrapWaveBars,
-} from '@comechaslerie/scrap-ui';
+import { ScrapBadge, ScrapButton, ScrapCard, ScrapIcon, ScrapWaveBars } from '@scrap-node/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 import { peaks } from './samples';
 

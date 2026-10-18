@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { ScrapButton, ScrapIcon } from '@comechaslerie/scrap-ui';
+import { ScrapButton, ScrapIcon } from '@scrap-node/scrap-ui';
 
 /**
  * Rejoue une animation d'entrée à la demande.
