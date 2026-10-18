@@ -12,13 +12,90 @@ si l'API TypeScript ne bouge pas.
 
 ### Ajouté
 
+- Composants pour les outils de création :
+  - commandes : `button[scrap-icon-button]` (nom servant d'info-bulle et
+    d'`aria-label`, raccourci annoncé par `aria-keyshortcuts`, état
+    `aria-pressed`), `[scrapTooltip]`, `scrap-toolbar` (un seul arrêt de
+    tabulation, flèches, lettre d'un outil), `scrap-menu` avec
+    `[scrapMenuTrigger]`, `scrap-menu-item` et `scrap-menu-separator`, posé dans
+    la couche supérieure du navigateur (API Popover) ;
+  - saisie : `scrap-select` et `scrap-option`, `scrap-segmented` et
+    `button[scrap-segment]`, `scrap-number-field` (glisser l'étiquette, flèches,
+    Entrée, Échap), `scrap-dropzone`, et les directives `scrapChoice`,
+    `scrapCheckbox`, `scrapRadio` et `scrapSwitch`. Les contrôles implémentent
+    `ControlValueAccessor` ;
+  - affichage : `scrap-progress`, `scrap-callout`, `dl[scrap-props]` et
+    `div[scrap-prop]`, `details[scrap-disclosure]`, `table[scrap-table]`,
+    `kbd[scrap-kbd]` ;
+  - navigation : `scrap-breadcrumbs`, `scrap-tree` (motif ARIA « tree »),
+    `scrap-sheet` (panneau latéral non modal), `scrap-history` ;
+  - applications : `scrap-shell` et ses régions (`scrapShellBrand`,
+    `scrapShellHead`, `scrapShellNav`, `scrapShellMain`, `scrapShellAside`,
+    `scrapShellStatus`), `scrap-statusbar` avec `scrapStatusItem` et
+    `scrapStatusSpacer` ;
+  - palette de commandes : le service `ScrapCommands` (registre des commandes,
+    raccourcis valables dans toute la page) et `scrap-command-palette` (⌘K ou
+    Ctrl+K, recherche approximative) ;
+  - audio et montage : `scrap-transport`, `scrap-timecode`, `scrap-timeline`,
+    `scrap-lane` et `scrap-marker`. `scrap-wave-bars` accepte `altered` : les
+    plages détruites passent en cuivre.
+- `scrap-button` : variante `danger`, tailles `s` et `l`, et `icon` pour un
+  bouton à icône seule.
+- `scrap-badge` : tonalité `accent` et pastille `dot`.
+- `scrap-slider` : `showValue` et `unit` affichent l'étiquette et la valeur ;
+  les nombres suivent l'usage français.
+- `scrap-field` : `optional`, une mention discrète dans l'étiquette.
+- `ScrapToast.show()` accepte `{ duration, action }` : un toast peut proposer
+  « Annuler », et reste alors six secondes. `act(id)` lance son action.
+- `ScrapTheme` : la préférence `system`, suivie en direct, et `preference()`.
+- Jetons : rôles de surface, d'encre et de filet, couleurs de données
+  (`--scrap-data-*`) et de code (`--scrap-code-*`), rayons, hauteurs de
+  contrôle, échelle typographique. Chaque couleur porte ses valeurs claire et
+  sombre (`light-dark()`), et `data-scrap-theme` force le thème de n'importe
+  quelle zone.
+- Feuille CSS compilée pour les projets sans Angular : `css/scrap-ui.css` et
+  `css/scrap-ui-affiche.css`, déclarées dans le champ `exports`.
+- Icônes : 97 tracés au trait, les douze noms existants compris.
+- `formatShortcut`, `ariaShortcut` et `matchesShortcut` pour écrire, annoncer et
+  reconnaître un raccourci (`mod+enter` : ⌘↵ sur Mac, Ctrl+Entrée ailleurs).
 - Vitrine : un bouton « Rejouer » relance les animations d'entrée. Une animation
   CSS ne se déclenche qu'à l'insertion de l'élément, il fallait donc recharger
-  la page pour revoir `.scrap-stamp-in` ou l'arrivée du code d'une page
-  d'erreur.
+  la page pour revoir `.scrap-stamp-in`.
+- Vitrine : une page par famille de composants, et une palette de commandes.
 
 ### Modifié
 
+- **Rupture** — rendu : surfaces claires et filets fins, boutons en pilule,
+  titres en casse de phrase, accent cuivre réservé à l'action principale. Le
+  grain, les tampons, les bords déchirés et les animations d'entrée quittent
+  les composants.
+- **Rupture** — les composants n'embarquent plus de styles : tout passe par les
+  classes `.scrap-*` de la feuille globale. Les surcharges qui visaient leurs
+  classes internes sont à reprendre : `.plate` devient `.scrap-dialog__panel`,
+  `.card-head` `.scrap-card__head`, `.toast` `.scrap-toast`, `.burger`
+  `.scrap-header__burger`, `nav.open` `nav.is-open`, et les tonalités de badge
+  `.success` deviennent `.scrap-badge--success`.
+- **Rupture** — module Affiche : `.scrap-grain`, `.scrap-torn-bottom`,
+  `.scrap-stamp`, `.scrap-rule`, `.scrap-hero-title`, les curseurs décoratifs
+  (sauf `.scrap-cursor-cross`), les animations `.scrap-stamp-in`,
+  `.scrap-reveal` et `.scrap-jitter`, et l'affichage de `<scrap-splat>`
+  demandent désormais `@use '@comechaslerie/scrap-ui/styles/affiche'`.
+- **Rupture** — la feuille est rangée en couches (`@layer scrap.tokens`,
+  `scrap.base`, `scrap.components`, `scrap.affiche`) : le CSS d'un projet, hors
+  couche, l'emporte toujours, sans `!important`.
+- **Rupture** — `<scrap-icon>` dessine au trait sur une grille de 20
+  (`stroke="currentColor"`, `fill="none"`) : sa couleur se règle par `color`.
+- `scrap-vu-meter` compte 24 segments par défaut, au lieu de 14.
+- `scrap-spinner` devient un anneau, et dit « Chargement » aux lecteurs d'écran
+  quand il n'a pas d'étiquette.
+- `scrap-error-page` perd son éclaboussure et son animation d'entrée.
+- `scrap-header` : `ScrapNavLink.current` marque la page courante ; les liens
+  passent derrière le bouton de menu quand l'en-tête descend sous 560 px de
+  large, et non plus selon la largeur de l'écran.
+- Les anciens jetons (`--scrap-bg-alt`, `--scrap-border`, `--scrap-shadow`,
+  `--scrap-fs-small`…) restent comme alias des nouveaux rôles, jusqu'à la
+  prochaine version majeure.
+- `npm run build` construit aussi la feuille CSS ; la publication passe par lui.
 - Licence : le code passe de MIT à Apache 2.0, avec un fichier `NOTICE`. Le nom
   « Scrap » et les logos restent réservés. Les versions jusqu'à 0.2.0 incluse
   restent sous MIT.

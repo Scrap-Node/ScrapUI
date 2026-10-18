@@ -1,7 +1,8 @@
 # @comechaslerie/scrap-ui
 
-Direction artistique commune aux projets **Scrap** — tokens CSS, composants et layouts
-Angular 22 (standalone + signals). Charte grunge figée dérivée de Scrap Node.
+Bibliothèque d'interface des projets **Scrap Node** : jetons CSS, composants Angular 22
+(autonomes, signaux, `OnPush`, sûrs en SSR) et une feuille CSS compilée pour les projets
+sans Angular.
 
 > **Règle d'or : la palette et les typos sont fixes. Seul le logo change d'un projet à l'autre.**
 
@@ -27,14 +28,17 @@ ng add @comechaslerie/scrap-ui    # branche le thème dans styles.scss
 ```scss
 // styles.scss
 @use '@comechaslerie/scrap-ui/styles/index';
+@use '@comechaslerie/scrap-ui/styles/affiche'; // facultatif : grain, tampons, éclaboussures
 ```
 
 ```ts
 import { ScrapButton, ScrapCard, ScrapHeader } from '@comechaslerie/scrap-ui';
 ```
 
-Thème clair/sombre automatique (OS), forçable via `data-scrap-theme` sur `<html>`.
-Tous les tokens sont des custom properties `--scrap-*`.
+Sans Angular (HTML, Blazor) : `css/scrap-ui.css`, et au besoin `css/scrap-ui-affiche.css`.
+
+Le thème suit celui du système ; `data-scrap-theme="light"` ou `"dark"` le force sur
+`<html>` ou sur une zone. Tous les jetons sont des custom properties `--scrap-*`.
 
 ## Prérequis côté consommateur
 

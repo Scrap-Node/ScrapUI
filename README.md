@@ -1,25 +1,32 @@
 # Scrap UI
 
-Direction artistique commune à tous les projets, dérivée de la charte graphique
-Scrap Node (03/03/26). Librairie Angular : tokens, composants, layouts.
+Bibliothèque d'interface des projets Scrap Node, dérivée de la charte graphique
+du 03/03/26 : des jetons CSS, des composants Angular, et une feuille CSS pour
+les projets qui n'utilisent pas Angular.
 
 **Règle d'or : la palette et les typos sont fixes. Seul le logo change d'un projet à l'autre.**
 
 ## Direction artistique
 
-| Élément     | Valeur                                                                                               |
-| ----------- | ---------------------------------------------------------------------------------------------------- |
-| Palette     | `#000000` noir · `#322216` brun foncé · `#956140` cuivre · `#718993` bleu-gris · `#FFFFFF` blanc     |
-| Titres      | Helvetica 900, capitales, léger désaxage « tampon »                                                  |
-| Corps       | Arial                                                                                                |
-| Style       | Grunge/récup : grain, bords déchirés, ombres dures, tampons, éclaboussures                           |
-| Sémantiques | erreur `rouille #8a3324` · succès `mousse #5f7a3f` · avertissement `ocre #b3822f` · info `bleu-gris` |
-| Thèmes      | Clair et sombre (auto via OS, ou forcé par `data-scrap-theme` sur `<html>`)                          |
+| Élément     | Valeur                                                                                                 |
+| ----------- | ------------------------------------------------------------------------------------------------------ |
+| Palette     | `#000000` noir, `#322216` brun écorce, `#956140` cuivre, `#718993` bleu-gris, `#FFFFFF` blanc          |
+| Titres      | Helvetica, gras, en casse de phrase                                                                    |
+| Corps       | Arial, 14 px dans les interfaces                                                                       |
+| Style       | Sobre et dense, fait pour des outils : filets fins, surfaces claires, une seule couleur d'accent       |
+| Sémantiques | erreur `rouille #8a3324`, succès `mousse #5f7a3f`, avertissement `ocre #b3822f`, information bleu-gris |
+| Données     | gris l'original, cuivre ce qui est altéré, encre la tête de lecture, bleu-gris la boucle               |
+| Thèmes      | clair et sombre ; suit le système, ou forcé par `data-scrap-theme` sur `<html>` ou sur une zone        |
+
+Le grain, les bords déchirés, les tampons et les éclaboussures vivent dans le
+**module Affiche**, facultatif : pour les affiches, les pages d'accueil et les
+campagnes, pas pour les outils.
 
 ## Vitrine
 
-La démo est une vitrine routée, une page par composant. Elle sert aussi de
-référence aux tests de régression visuelle.
+La démo est une vitrine routée, une page par famille de composants. Elle sert
+aussi de référence aux tests de régression visuelle. <kbd>⌘K</kbd> (ou
+<kbd>Ctrl+K</kbd>) ouvre sa palette de commandes.
 
 ```bash
 npm start   # construit la lib puis sert la vitrine sur http://localhost:4200
@@ -42,7 +49,7 @@ Puis, avec `GITHUB_PACKAGES_TOKEN` dans l'environnement (shell, CI, `--build-arg
 
 ```bash
 npm install @comechaslerie/scrap-ui
-ng add @comechaslerie/scrap-ui    # branche le thème dans la feuille de styles du projet
+ng add @comechaslerie/scrap-ui    # branche les styles dans la feuille du projet
 ```
 
 `ng add` lit `angular.json` pour trouver la bonne feuille de styles ; dans un
@@ -52,93 +59,111 @@ workspace multi-projets, préciser la cible : `ng add @comechaslerie/scrap-ui --
 
 ```scss
 @use '@comechaslerie/scrap-ui/styles/index';
+@use '@comechaslerie/scrap-ui/styles/affiche'; // facultatif : le module Affiche
 ```
+
+### Sans Angular
+
+Une page HTML ou une application Blazor prend la feuille compilée, livrée dans
+le paquet (`node_modules/@comechaslerie/scrap-ui/css/`) :
+
+```html
+<link rel="stylesheet" href="css/scrap-ui.css" />
+<!-- Facultatif : le module Affiche -->
+<link rel="stylesheet" href="css/scrap-ui-affiche.css" />
+
+<button class="scrap-btn scrap-btn--primary">Exporter</button>
+<section data-scrap-theme="dark">…</section>
+```
+
+Les classes suivent la même nomenclature que les composants : `.scrap-btn`,
+`.scrap-card__title`, `.scrap-menu__item--danger`…
 
 ### Composants
 
-```ts
-import {
-  ScrapBadge,
-  ScrapButton,
-  ScrapCard,
-  ScrapEmptyState,
-  ScrapErrorPage,
-  ScrapField,
-  ScrapFooter,
-  ScrapHeader,
-  ScrapIcon,
-  ScrapInput,
-  ScrapModal,
-  ScrapSlider,
-  ScrapSpinner,
-  ScrapSplat,
-  ScrapTab,
-  ScrapTabs,
-  ScrapTheme,
-  ScrapThemeToggle,
-  ScrapToast,
-  ScrapToasts,
-} from '@comechaslerie/scrap-ui';
-```
+| Famille          | Composants et directives                                                                                                     |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Bases            | `scrap-icon`, `kbd[scrap-kbd]`, `ScrapTheme`, `scrap-theme-toggle`                                                           |
+| Commandes        | `button[scrap-button]`, `button[scrap-icon-button]`, `[scrapTooltip]`, `scrap-toolbar`, `scrap-menu`, `[scrapMenuTrigger]`   |
+| Saisie           | `scrap-field`, `[scrapInput]`, `scrap-select`, `scrap-segmented`, `scrap-number-field`, `scrap-slider`, `scrap-dropzone`     |
+| Choix            | `label[scrapChoice]`, `input[scrapCheckbox]`, `input[scrapRadio]`, `input[scrapSwitch]`                                      |
+| Affichage        | `scrap-badge`, `scrap-card`, `scrap-tabs`, `dl[scrap-props]`, `table[scrap-table]`, `details[scrap-disclosure]`              |
+| États et retours | `scrap-spinner`, `scrap-progress`, `scrap-callout`, `ScrapToast`, `scrap-toasts`, `scrap-modal`, `scrap-empty-state`         |
+| Navigation       | `scrap-breadcrumbs`, `scrap-tree`, `scrap-sheet`, `scrap-history`, `ScrapCommands`, `scrap-command-palette`                  |
+| Applications     | `scrap-shell` et ses régions, `scrap-statusbar`, `scrap-header`, `scrap-footer`, `scrap-error-page`                          |
+| Audio et montage | `scrap-wave-bars`, `scrap-wave-line`, `scrap-vu-meter`, `scrap-wave-live`, `scrap-transport`, `scrap-timeline`, `scrap-lane` |
+| Affiche          | `scrap-splat`                                                                                                                |
+
+Tous les composants sont autonomes, en `OnPush`, sûrs en SSR. Les contrôles de
+saisie implémentent `ControlValueAccessor` : `formControlName` et `[(ngModel)]`
+marchent directement.
 
 ```html
-<scrap-header appName="Mon Projet" [links]="links">
-  <img logo src="assets/logo-du-projet.svg" alt="" />
-  <!-- slot logo : propre à chaque projet -->
-  <scrap-theme-toggle actions />
-</scrap-header>
+<!-- Un outil : barre d'outils, info-bulle et raccourci -->
+<scrap-toolbar label="Outils" orientation="vertical" panel>
+  <button
+    scrap-icon-button
+    label="Zone"
+    shortcut="T"
+    [pressed]="outil() === 'zone'"
+    (click)="outil.set('zone')"
+  >
+    <scrap-icon name="zone" />
+  </button>
+</scrap-toolbar>
 
-<button scrap-button>Primaire</button>
-<button scrap-button variant="secondary">Secondaire</button>
-<button scrap-button variant="ghost">Fantôme</button>
+<!-- Un menu, dans la couche supérieure du navigateur (API Popover) -->
+<button scrap-button variant="ghost" [scrapMenuTrigger]="fichier">Fichier</button>
+<scrap-menu #fichier label="Fichier">
+  <button scrap-menu-item (click)="ouvrir()">Ouvrir… <kbd scrap-kbd>⌘O</kbd></button>
+  <scrap-menu-separator />
+  <button scrap-menu-item tone="danger" (click)="fermer()">Fermer la session</button>
+</scrap-menu>
 
-<scrap-card title="Titre">contenu…</scrap-card>
-
-<!-- La directive scrapInput relie l'étiquette, l'indice et l'erreur au contrôle -->
-<scrap-field label="Email" hint="optionnel" [error]="messageErreur()">
-  <input scrapInput type="email" />
+<!-- Saisie -->
+<scrap-field label="Nom de la session" hint="Visible dans l'historique." [error]="erreur()">
+  <input scrapInput />
 </scrap-field>
+<scrap-select label="Opérateur" formControlName="operateur">
+  @for (op of operateurs; track op.id) {
+  <scrap-option [value]="op.id" [description]="op.aide">{{ op.nom }}</scrap-option>
+  }
+</scrap-select>
+<scrap-segmented label="Piste écoutée" [(value)]="piste">
+  <button scrap-segment value="a">A</button>
+  <button scrap-segment value="b">B</button>
+</scrap-segmented>
+<scrap-number-field label="Densité" unit="%" [min]="0" [max]="100" [(value)]="densite" />
 
-<scrap-footer appName="Mon Projet">…</scrap-footer>
+<!-- Montage audio -->
+<scrap-transport [(playing)]="lecture" [(loop)]="boucle" [time]="position()" [duration]="6.4" />
+<scrap-timeline [duration]="6.4" [(selection)]="zone" [(playhead)]="position">
+  <scrap-lane label="A"><scrap-wave-bars [data]="original" /></scrap-lane>
+  <scrap-lane label="B"><scrap-wave-bars [data]="detruit" [altered]="zones" /></scrap-lane>
+</scrap-timeline>
 
-<!-- Badges sémantiques -->
-<scrap-badge tone="success">OK</scrap-badge>
-
-<!-- Onglets : flèches, Origine et Fin naviguent au clavier -->
-<scrap-tabs label="Fiche pièce">
-  <scrap-tab label="Détails">…</scrap-tab>
-  <scrap-tab label="Notes">…</scrap-tab>
-</scrap-tabs>
-
-<!-- Modale : <dialog> natif, donc piège de focus et Échap fournis par le navigateur -->
-<scrap-modal [(open)]="showModal" title="Confirmer">
-  contenu…
-  <div actions><button scrap-button>OK</button></div>
-</scrap-modal>
-
-<!-- Toasts : poser <scrap-toasts /> dans le layout racine, puis
-     inject(ScrapToast).show('Enregistré', 'success') -->
+<!-- Retours : poser <scrap-toasts /> et <scrap-command-palette /> une fois, dans le layout racine -->
 <scrap-toasts />
-
-<!-- Loader, état vide, page d'erreur, décor -->
-<scrap-spinner label="Chargement…" />
-<scrap-empty-state message="Aucun résultat"><button scrap-button>Créer</button></scrap-empty-state>
-<scrap-error-page code="404"><a scrap-button href="/">Retour</a></scrap-error-page>
-<scrap-splat name="burst" [size]="200" style="color: var(--scrap-copper)" />
-
-<!-- Curseur : two-way binding, ou formControlName (ControlValueAccessor) -->
-<scrap-slider [(value)]="volume" [step]="10" [ticks]="true" label="Volume">
-  <scrap-icon icon name="volume" />
-</scrap-slider>
-<scrap-slider formControlName="seuil" label="Seuil d'alerte" />
-
-<!-- Audio : forme d'onde (clic ou clavier), oscilloscope, VU-mètre (données 0..1) -->
-<scrap-wave-bars [data]="peaks" [progress]="progress()" (seek)="onSeek($event)" />
-<scrap-wave-line [data]="samples" />
-<scrap-vu-meter [level]="0.7" />
-<!-- Temps réel depuis Web Audio : mode "line" (oscilloscope) ou "bars" (spectre) -->
-<scrap-wave-live [analyser]="analyserNode" mode="line" />
+<scrap-command-palette />
 ```
+
+```ts
+inject(ScrapToast).show('Passe 4 appliquée', 'success', {
+  action: { label: 'Annuler', run: () => this.passes.undo() },
+});
+
+// Une commande : dans la palette (⌘K), et son raccourci marche dans toute la page
+inject(ScrapCommands).register({
+  id: 'detruire',
+  label: 'Détruire la zone',
+  group: 'Destruction',
+  shortcut: 'mod+enter',
+  run: () => this.destroy(),
+});
+```
+
+Les raccourcis s'écrivent `mod+enter` : ⌘↵ sur Mac, Ctrl+Entrée ailleurs.
+`formatShortcut()` les met en forme pour l'affichage.
 
 Les noms d'icônes et d'éclaboussures sont typés : `SCRAP_ICON_NAMES` et
 `SCRAP_SPLAT_NAMES` exposent les listes disponibles, et un nom inconnu ne compile pas.
@@ -146,35 +171,39 @@ Les noms d'icônes et d'éclaboussures sont typés : `SCRAP_ICON_NAMES` et
 ### Thème
 
 `ScrapTheme` porte l'état, `providedIn: 'root'` : plusieurs `<scrap-theme-toggle>`
-dans une page restent synchronisés, et rien n'est lu ni écrit côté serveur.
+dans une page restent synchronisés, et rien n'est lu ni écrit côté serveur. Par
+défaut, le thème suit celui du système, en direct.
 
 ```ts
 const theme = inject(ScrapTheme);
-theme.theme(); // 'light' | 'dark'
-theme.set('dark');
+theme.theme(); // 'light' | 'dark' : le thème affiché
+theme.preference(); // 'light' | 'dark' | 'system' : le choix retenu
+theme.set('dark'); // mémorisé
+theme.set('system'); // revient au réglage du système
 theme.toggle();
 ```
 
-### Utilitaires CSS
+`data-scrap-theme="dark"` (ou `light`) force aussi le thème d'une seule zone de
+la page.
 
-Curseurs : `.scrap-cursor-cross`, `.scrap-cursor-wrench`, `.scrap-cursor-marker`,
-`.scrap-cursor-spray`, `.scrap-cursor-gear`.
+### Module Affiche
 
-Classes globales : `.scrap-grain` (texture bruit), `.scrap-torn-bottom`
-(bord déchiré), `.scrap-stamp` (badge tampon), `.scrap-rule` (séparateur pinceau),
-`.scrap-hero-title`, `.scrap-input`, `.scrap-select`, `.scrap-checkbox`,
-`.scrap-radio`, `.scrap-choice`, `.scrap-table`, et animations `.scrap-stamp-in`
-(coup de tampon), `.scrap-reveal` (apparition au défilement), `.scrap-jitter`
-(tremblement au survol). Toutes neutralisées sous `prefers-reduced-motion`.
+Avec `@use '@comechaslerie/scrap-ui/styles/affiche'` (ou `css/scrap-ui-affiche.css`) :
+`.scrap-poster`, `.scrap-grain` (texture), `.scrap-torn-bottom` (bord déchiré),
+`.scrap-hero-title`, `.scrap-stamp` (tampon), `.scrap-rule` (trait de pinceau),
+les curseurs `.scrap-cursor-wrench`, `.scrap-cursor-marker`, `.scrap-cursor-spray`
+et `.scrap-cursor-gear`, le composant `<scrap-splat>`, et les animations
+`.scrap-stamp-in`, `.scrap-reveal` et `.scrap-jitter`. Toutes neutralisées sous
+`prefers-reduced-motion`.
 
 Assets fournis (`node_modules/@comechaslerie/scrap-ui/assets/`) : `favicon.svg` et
-`manifest.webmanifest` (template — remplacer le nom du projet).
+`manifest.webmanifest` (template, remplacer le nom du projet).
 
 ## Développer
 
 ```bash
 npm start            # vitrine sur http://localhost:4200 (construit la lib au passage)
-npm run build        # construit la lib dans dist/scrap-ui
+npm run build        # construit la lib dans dist/scrap-ui, et sa feuille CSS compilée
 npm test             # tests unitaires (lib + démo + schematic)
 npm run lint         # ESLint : TypeScript, gabarits, accessibilité
 npm run format       # Prettier
@@ -189,7 +218,10 @@ la vitrine consomme la lib construite sans passer par npm. Pour un projet extern
 
 ### Ajouter un composant
 
-1. Le composant dans `projects/scrap-ui/src/lib/`, en `OnPush`.
+1. Le composant dans `projects/scrap-ui/src/lib/`, en `OnPush`, sans styles
+   propres : ses classes `.scrap-*` vont dans un partiel de
+   `projects/scrap-ui/src/styles/components/`, déclaré dans `_components.scss`.
+   La feuille CSS compilée en hérite, et les projets sans Angular avec.
 2. Son export dans `projects/scrap-ui/src/public-api.ts`.
 3. Ses tests unitaires à côté, en `.spec.ts`.
 4. Une story dans `projects/demo/src/app/stories/` et son entrée dans
@@ -199,14 +231,15 @@ la vitrine consomme la lib construite sans passer par npm. Pour un projet extern
 
 ### Régression visuelle
 
-64 captures couvrent chaque story dans les deux thèmes, les états qu'on n'atteint
-qu'en interagissant (modale ouverte, toasts empilés, focus clavier, survol) et le
-rendu mobile.
+86 captures couvrent chaque story dans les deux thèmes, le rendu mobile, et les
+états qu'on n'atteint qu'en interagissant : modale, menu et liste ouverts,
+palette de commandes, info-bulle, toasts empilés, focus clavier, survol.
 
-`e2e/behaviour.spec.ts` complète le tableau avec 9 tests de comportement, sans
+`e2e/behaviour.spec.ts` complète le tableau avec 23 tests de comportement, sans
 capture : ils vérifient ce que jsdom ne sait pas simuler — piège de focus du
-`<dialog>` natif, restauration du focus à la fermeture, pause réelle des toasts
-au survol, panneau d'onglets unique dans l'arbre d'accessibilité.
+`<dialog>` natif, couche supérieure et fermeture au clic à côté de l'API
+Popover, focus rendu à la fermeture, glissement à la souris dans le champ
+numérique et la timeline, pause réelle des toasts au survol.
 
 ### Rendu serveur
 
@@ -244,16 +277,16 @@ par `npm run visual:update`, pour boucler vite pendant le développement.
 ## Publier une version
 
 Le tag est le déclencheur : `.github/workflows/release.yml` vérifie, construit la
-lib et la publie sur GitHub Packages avec le `GITHUB_TOKEN` du runner — aucun PAT
-à stocker pour publier.
+lib et sa feuille CSS, puis les publie sur GitHub Packages avec le `GITHUB_TOKEN`
+du runner — aucun PAT à stocker pour publier.
 
 ```bash
 # 1. bumper la version de la lib (c'est elle qui compte, pas celle de la racine)
-npm version --no-git-tag-version 0.2.0 --prefix projects/scrap-ui
+npm version --no-git-tag-version 0.3.0 --prefix projects/scrap-ui
 # 2. renseigner CHANGELOG.md
-git commit -am "scrap-ui 0.2.0"
+git commit -am "scrap-ui 0.3.0"
 # 3. taguer : le workflow refuse un tag qui ne correspond pas à projects/scrap-ui/package.json
-git tag v0.2.0 && git push origin main --tags
+git tag v0.3.0 && git push origin main --tags
 ```
 
 Pour un essai en local (`npm publish` depuis `dist/scrap-ui`), il faut un PAT avec
