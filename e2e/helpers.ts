@@ -26,3 +26,22 @@ export async function openStory(page: Page, path: string, theme: Theme = 'light'
 export function shot(name: string, theme: Theme): string {
   return `${name}-${theme}.png`;
 }
+
+/**
+ * Attend la fin des animations de la page, surcouches comprises.
+ *
+ * `animations: 'disabled'` ne rattrape pas toujours une animation lancée
+ * juste avant la capture : une référence a déjà figé la modale à mi-chemin
+ * de son ouverture. Les animations infinies (spinner, progression
+ * indéterminée) restent à Playwright, qui les annule au moment de capturer.
+ */
+export async function settle(page: Page): Promise<void> {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => undefined)),
+    ),
+  );
+}

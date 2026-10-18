@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openStory, shot, type Theme } from './helpers';
+import { openStory, settle, shot, type Theme } from './helpers';
 
 const THEMES: Theme[] = ['light', 'dark'];
 
@@ -31,6 +31,7 @@ for (const theme of THEMES) {
       await openStory(page, 'modale-toasts', theme);
       await page.getByRole('button', { name: 'Ouvrir la modale' }).click();
       await expect(page.getByRole('dialog')).toBeVisible();
+      await settle(page);
       await expect(page).toHaveScreenshot(shot('modale-ouverte', theme));
     });
 
@@ -45,6 +46,7 @@ for (const theme of THEMES) {
       // Le survol met la pile en pause : sans lui, les toasts s'évaporeraient
       // pendant la capture et le test serait instable.
       await toasts.hover();
+      await settle(page);
       await expect(toasts).toHaveScreenshot(shot('toasts', theme));
     });
 
@@ -110,6 +112,7 @@ for (const theme of THEMES) {
       await page.getByRole('button', { name: 'Fichier' }).click();
       const menu = page.getByRole('menu', { name: 'Fichier' });
       await expect(menu).toBeVisible();
+      await settle(page);
       await expect(menu).toHaveScreenshot(shot('menu-ouvert', theme));
     });
 
@@ -119,6 +122,7 @@ for (const theme of THEMES) {
       await select.getByRole('button').click();
       const list = select.getByRole('listbox');
       await expect(list).toBeVisible();
+      await settle(page);
       await expect(list).toHaveScreenshot(shot('liste-ouverte', theme));
     });
 
@@ -127,6 +131,7 @@ for (const theme of THEMES) {
       const bar = page.getByRole('toolbar', { name: 'Outils' });
       await bar.getByRole('button', { name: 'Zone' }).hover();
       await expect(page.getByRole('tooltip')).toBeVisible();
+      await settle(page);
       await expect(page.locator('story-case').first().locator('.stage')).toHaveScreenshot(
         shot('info-bulle', theme),
       );
@@ -139,6 +144,7 @@ for (const theme of THEMES) {
       await expect(dialog).toBeVisible();
       await dialog.getByRole('combobox').fill('form');
       await expect(dialog.getByRole('option')).toHaveCount(1);
+      await settle(page);
       await expect(page).toHaveScreenshot(shot('palette-ouverte', theme));
     });
 
