@@ -1,0 +1,99 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Carte
+  // ------------------------------------------------------------
+  .scrap-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--scrap-line);
+    border-radius: var(--scrap-radius-l);
+    background: var(--scrap-raised);
+    color: var(--scrap-ink);
+  }
+  .scrap-card__media {
+    position: relative;
+    aspect-ratio: 16 / 6;
+    background: var(--scrap-sunken);
+    overflow: hidden;
+  }
+  .scrap-card__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--scrap-grain-url);
+    opacity: var(--scrap-grain-opacity);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .scrap-card__media > svg {
+    position: absolute;
+    inset: 14% 6%;
+    width: 88%;
+    height: 72%;
+  }
+  .scrap-card__media > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .scrap-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--scrap-space-2);
+    padding: var(--scrap-space-3) var(--scrap-space-4) 0;
+  }
+  .scrap-card__title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font: var(--scrap-weight-strong) var(--scrap-fs-l) / 1.3 var(--scrap-font-display);
+    color: var(--scrap-ink-strong);
+    letter-spacing: 0;
+  }
+  .scrap-card__body {
+    padding: var(--scrap-space-2) var(--scrap-space-4) var(--scrap-space-4);
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-card__body > :first-child {
+    margin-top: 0;
+  }
+  .scrap-card__body > :last-child {
+    margin-bottom: 0;
+  }
+  .scrap-card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--scrap-space-2);
+    padding: var(--scrap-space-3) var(--scrap-space-4);
+    border-top: 1px solid var(--scrap-line);
+  }
+  .scrap-card--interactive {
+    cursor: pointer;
+    transition:
+      border-color var(--scrap-dur) var(--scrap-ease),
+      background-color var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-card--interactive:hover {
+    border-color: var(--scrap-line-strong);
+  }
+  .scrap-card[aria-selected='true'] {
+    border-color: var(--scrap-accent);
+    box-shadow: 0 0 0 1px var(--scrap-accent);
+  }
+
+  // Les emplacements vides ne prennent pas de place
+  .scrap-card__media:empty,
+  .scrap-card__head:empty,
+  .scrap-card__body:empty,
+  .scrap-card__foot:empty {
+    display: none;
+  }
+  // Un conteneur `<div footer>` laisse ses boutons s'aligner comme s'ils étaient posés directement
+  .scrap-card__foot > div[footer] {
+    display: contents;
+  }
+}

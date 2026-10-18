@@ -1,0 +1,42 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Accordéon
+  // ------------------------------------------------------------
+  .scrap-disclosure {
+    border-top: 1px solid var(--scrap-line);
+  }
+  .scrap-disclosure:last-child {
+    border-bottom: 1px solid var(--scrap-line);
+  }
+  .scrap-disclosure > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--scrap-space-2);
+    min-height: var(--scrap-control-l);
+    font-weight: var(--scrap-weight-strong);
+    font-size: var(--scrap-fs-ui);
+    color: var(--scrap-ink);
+    cursor: pointer;
+  }
+  .scrap-disclosure > summary::-webkit-details-marker {
+    display: none;
+  }
+  .scrap-disclosure > summary > :is(.scrap-i, scrap-icon) {
+    color: var(--scrap-ink-muted);
+    transition: transform var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-disclosure[open] > summary > :is(.scrap-i, scrap-icon):first-child {
+    transform: rotate(90deg);
+  }
+  .scrap-disclosure > summary .scrap-badge {
+    margin-left: auto;
+  }
+  .scrap-disclosure__body {
+    display: grid;
+    gap: var(--scrap-space-3);
+    padding: 2px 0 var(--scrap-space-4);
+    font-size: var(--scrap-fs-ui);
+    color: var(--scrap-ink-muted);
+  }
+}

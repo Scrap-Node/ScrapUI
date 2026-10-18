@@ -1,0 +1,13 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Icône : un trait de 1,6 sur une grille de 20, en currentColor
+  // ------------------------------------------------------------
+  scrap-icon {
+    display: inline-flex;
+    flex: none;
+    vertical-align: middle;
+  }
+  scrap-icon > svg {
+    stroke-width: var(--scrap-icon-stroke, 1.6);
+  }
+}

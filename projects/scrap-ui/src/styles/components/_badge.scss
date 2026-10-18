@@ -1,0 +1,59 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Badge
+  // ------------------------------------------------------------
+  .scrap-badge {
+    --tone: var(--scrap-ink-faint);
+    --tone-solid: var(--scrap-fill-hover);
+    --tone-ink: var(--scrap-ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 9px;
+    border-radius: var(--scrap-radius-m);
+    background: var(--tone-solid);
+    color: var(--tone-ink);
+    font: 700 var(--scrap-fs-s) / 1 var(--scrap-font-body);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .scrap-badge--accent {
+    --tone: var(--scrap-copper);
+    --tone-solid: var(--scrap-copper);
+    --tone-ink: var(--scrap-white);
+  }
+  .scrap-badge--info {
+    --tone: var(--scrap-steel);
+    --tone-solid: var(--scrap-steel);
+    --tone-ink: var(--scrap-black);
+  }
+  .scrap-badge--success {
+    --tone: var(--scrap-moss);
+    --tone-solid: var(--scrap-moss);
+    --tone-ink: var(--scrap-white);
+  }
+  .scrap-badge--warning {
+    --tone: var(--scrap-ochre);
+    --tone-solid: var(--scrap-ochre);
+    --tone-ink: var(--scrap-black);
+  }
+  .scrap-badge--danger {
+    --tone: var(--scrap-rust);
+    --tone-solid: var(--scrap-rust);
+    --tone-ink: var(--scrap-white);
+  }
+  .scrap-badge--dot {
+    background: color-mix(in oklab, var(--tone) 22%, transparent);
+    color: var(--scrap-ink);
+    font-weight: 400;
+  }
+  .scrap-badge--dot::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--tone);
+    flex: none;
+  }
+}

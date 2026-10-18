@@ -1,0 +1,39 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Table
+  // ------------------------------------------------------------
+  .scrap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--scrap-fs-ui);
+    color: var(--scrap-ink);
+  }
+  .scrap-table th,
+  .scrap-table td {
+    height: 40px;
+    padding: 0 var(--scrap-space-3);
+    border-bottom: 1px solid var(--scrap-line);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .scrap-table th {
+    border-bottom-width: 2px;
+    font-weight: var(--scrap-weight-strong);
+    color: var(--scrap-ink-muted);
+    font-size: var(--scrap-fs-s);
+  }
+  .scrap-table td.num,
+  .scrap-table th.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .scrap-table tbody tr:hover td {
+    background: var(--scrap-hover);
+  }
+  .scrap-table tbody tr[aria-selected='true'] td {
+    background: var(--scrap-select);
+  }
+  .scrap-table .muted {
+    color: var(--scrap-ink-muted);
+  }
+}

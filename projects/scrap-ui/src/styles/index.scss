@@ -1,4 +1,6 @@
-// Point d'entrée du thème Scrap UI.
-// Dans un projet consommateur : @use 'scrap-ui/styles' ou import du chemin relatif.
+// Point d'entrée de Scrap UI : jetons, base, composants.
+// Dans un projet : @use '@comechaslerie/scrap-ui/styles/index';
+// Module facultatif pour les affiches : @use '@comechaslerie/scrap-ui/styles/affiche';
 @use 'tokens';
 @use 'base';
+@use 'components';

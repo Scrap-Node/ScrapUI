@@ -1,0 +1,55 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Onglets
+  // ------------------------------------------------------------
+  .scrap-tabs {
+    display: grid;
+    min-width: 0;
+  }
+  .scrap-tablist {
+    display: flex;
+    align-items: stretch;
+    gap: var(--scrap-space-5);
+    border-bottom: 2px solid var(--scrap-line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .scrap-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--scrap-space-2);
+    height: var(--scrap-control-l);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--scrap-ink-muted);
+    font: 400 var(--scrap-fs-ui) / 1 var(--scrap-font-body);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .scrap-tab:hover {
+    color: var(--scrap-ink);
+  }
+  .scrap-tab[aria-selected='true'] {
+    color: var(--scrap-ink-strong);
+    font-weight: var(--scrap-weight-strong);
+  }
+  .scrap-tab[aria-selected='true']::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--scrap-ink);
+  }
+  .scrap-tabpanel {
+    padding-top: var(--scrap-space-4);
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-tabpanel[hidden] {
+    display: none;
+  }
+}

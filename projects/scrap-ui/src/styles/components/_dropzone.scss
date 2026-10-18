@@ -1,0 +1,60 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Zone de dépôt
+  // ------------------------------------------------------------
+  .scrap-dropzone {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: var(--scrap-space-5) var(--scrap-space-4);
+    border: 2px dashed var(--scrap-line-strong);
+    border-radius: var(--scrap-radius-l);
+    color: var(--scrap-ink-muted);
+    font-size: var(--scrap-fs-ui);
+    text-align: center;
+    transition:
+      border-color var(--scrap-dur) var(--scrap-ease),
+      background-color var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-dropzone > .scrap-i {
+    width: 28px;
+    height: 28px;
+    color: var(--scrap-ink-faint);
+  }
+  .scrap-dropzone > scrap-icon {
+    color: var(--scrap-ink-faint);
+  }
+  .scrap-dropzone strong {
+    color: var(--scrap-ink);
+    font-weight: var(--scrap-weight-strong);
+  }
+  .scrap-dropzone small {
+    font-size: var(--scrap-fs-s);
+    color: var(--scrap-ink-faint);
+  }
+  .scrap-dropzone input[type='file'] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .scrap-dropzone.is-over {
+    border-color: var(--scrap-accent);
+    background: color-mix(in oklab, var(--scrap-copper) 8%, transparent);
+  }
+  .scrap-dropzone.is-over > :is(.scrap-i, scrap-icon) {
+    color: var(--scrap-accent-text);
+  }
+  .scrap-dropzone.is-error {
+    border-color: var(--scrap-danger);
+  }
+  .scrap-dropzone:focus-within {
+    outline: var(--scrap-focus-ring);
+    outline-offset: var(--scrap-focus-offset);
+  }
+
+  .scrap-dropzone .scrap-dropzone__error {
+    color: var(--scrap-danger-text);
+  }
+}

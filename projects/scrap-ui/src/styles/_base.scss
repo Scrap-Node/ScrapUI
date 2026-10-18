@@ -1,390 +1,138 @@
 // ============================================================
-// SCRAP UI — Base : reset léger, typographie, utilitaires grunge
+// SCRAP UI — Base : reset léger, typographie, icônes, focus
 // ============================================================
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: var(--scrap-font-body);
-  font-size: var(--scrap-fs-body);
-  line-height: 1.6;
-  color: var(--scrap-ink);
-  background-color: var(--scrap-bg);
-  -webkit-font-smoothing: antialiased;
-}
-
-// --- Titres : esprit "tampon" (Helvetica très grasse, capitales serrées) ---
-h1,
-h2,
-h3,
-.scrap-display,
-.scrap-hero-title {
-  font-family: var(--scrap-font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-  color: var(--scrap-ink-strong);
-  margin: 0 0 var(--scrap-space-3);
-}
-
-h1 {
-  font-size: var(--scrap-fs-h1);
-}
-h2 {
-  font-size: var(--scrap-fs-h2);
-}
-h3 {
-  font-size: var(--scrap-fs-h3);
-  letter-spacing: 0.02em;
-}
-
-// Le traitement d'affichage vient du groupe de titres ci-dessus : la classe
-// n'ajoute que la taille et le désaxage. Sans cela, .scrap-hero-title donnait
-// une taille énorme dans la fonte de corps, en minuscules — l'inverse de ce
-// que promet la charte.
-.scrap-hero-title {
-  font-size: var(--scrap-fs-hero);
-  // léger désaxage "tampon mal appliqué"
-  transform: rotate(-1deg);
-}
-
-a {
-  color: var(--scrap-accent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-}
-
-::selection {
-  background: var(--scrap-copper);
-  color: var(--scrap-white);
-}
-
-// ============================================================
-// Utilitaires grunge
-// ============================================================
-
-// Grain : bruit SVG (feTurbulence) en overlay sur tout conteneur positionné.
-// Usage : <div class="scrap-grain">…</div>
-.scrap-grain {
-  position: relative;
-}
-.scrap-grain::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: var(--scrap-texture-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-// Bord déchiré (bas) : à poser sur une section pleine largeur.
-.scrap-torn-bottom {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - 14px),
-    96% 100%,
-    91% calc(100% - 10px),
-    85% calc(100% - 2px),
-    78% calc(100% - 12px),
-    70% calc(100% - 5px),
-    62% calc(100% - 14px),
-    53% calc(100% - 4px),
-    45% calc(100% - 11px),
-    37% calc(100% - 2px),
-    29% calc(100% - 13px),
-    21% calc(100% - 6px),
-    13% calc(100% - 12px),
-    6% calc(100% - 3px),
-    0 calc(100% - 10px)
-  );
-}
-
-// Tampon : encadré désaxé pour labels/badges.
-.scrap-stamp {
-  display: inline-block;
-  font-family: var(--scrap-font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: var(--scrap-fs-small);
-  padding: 0.2em 0.7em;
-  border: var(--scrap-border-w) solid currentColor;
-  transform: rotate(-2deg);
-  color: var(--scrap-accent);
-}
-
-// ============================================================
-// Curseurs personnalisés
-// Data-URI SVG (les curseurs ne peuvent pas lire les CSS vars,
-// les couleurs de la charte sont donc codées en dur).
-// Chaque classe garde un curseur natif en repli.
-// ============================================================
-
-// Croix de visée anguleuse — zones de précision, canvas, découpe.
-.scrap-cursor-cross {
-  cursor:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cg fill='%23956140'%3E%3Crect x='11' y='0' width='2' height='8'/%3E%3Crect x='11' y='16' width='2' height='8'/%3E%3Crect x='0' y='11' width='8' height='2'/%3E%3Crect x='16' y='11' width='8' height='2'/%3E%3C/g%3E%3Crect x='10' y='10' width='4' height='4' fill='%23322216'/%3E%3C/svg%3E")
-      12 12,
-    crosshair;
-}
-
-// Clé à molette — actions d'édition, outillage, réglages.
-.scrap-cursor-wrench {
-  cursor:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath fill='%23322216' stroke='%23956140' stroke-width='1.5' d='M22 6.5a5 5 0 0 1-6.7 4.7L7 19.5a2.4 2.4 0 0 1-3.4-3.4L11.8 8A5 5 0 0 1 18 1.6l-2.8 2.8 1.4 3 3-.1L22 6.5Z'/%3E%3C/svg%3E")
-      3 22,
-    pointer;
-}
-
-// Marqueur — annotation, dessin, sélection de texte créative.
-.scrap-cursor-marker {
-  cursor:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath fill='%23956140' d='M2 24l3-8 4 4-7 4Z'/%3E%3Cpath fill='%23322216' d='M6 15 17 4l5 5L11 20l-5-5Z'/%3E%3Cpath fill='%23718993' d='M17 4l3-3 5 5-3 3-5-5Z'/%3E%3C/svg%3E")
-      2 24,
-    crosshair;
-}
-
-// Bombe de peinture — zones décoratives, mode grunge.
-.scrap-cursor-spray {
-  cursor:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Crect x='9' y='8' width='10' height='16' rx='1' fill='%23322216'/%3E%3Crect x='11' y='4' width='4' height='4' fill='%23718993'/%3E%3Cg fill='%23956140'%3E%3Ccircle cx='4' cy='4' r='1.6'/%3E%3Ccircle cx='7' cy='1.8' r='1.1'/%3E%3Ccircle cx='2' cy='8' r='1.2'/%3E%3Ccircle cx='6' cy='7' r='0.8'/%3E%3C/g%3E%3C/svg%3E")
-      4 4,
-    pointer;
-}
-
-// Engrenage — éléments déplaçables, manipulation.
-.scrap-cursor-gear {
-  cursor:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath fill='%23322216' stroke='%23956140' stroke-width='1.2' d='m13.8 2 .5 2.2 1.7.7 1.9-1.2 1.8 1.8-1.2 1.9.7 1.7 2.2.5v2.6l-2.2.5-.7 1.7 1.2 1.9-1.8 1.8-1.9-1.2-1.7.7-.5 2.2h-2.6l-.5-2.2-1.7-.7-1.9 1.2-1.8-1.8 1.2-1.9-.7-1.7L2 13.4v-2.6l2.2-.5.7-1.7-1.2-1.9 1.8-1.8 1.9 1.2 1.7-.7.5-2.2h2.6Z'/%3E%3Ccircle cx='12.5' cy='12' r='3' fill='%23956140'/%3E%3C/svg%3E")
-      12 12,
-    grab;
-}
-
-// ============================================================
-// Animations signature
-// ============================================================
-
-// Apparition "coup de tampon" : arrive de face et claque sur la page.
-@keyframes scrap-stamp-in {
-  0% {
-    opacity: 0;
-    transform: scale(1.7) rotate(4deg);
+@layer scrap.base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
-  55% {
-    opacity: 1;
-    transform: scale(0.94) rotate(-2deg);
-  }
-  75% {
-    transform: scale(1.03) rotate(-1deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(-1deg);
-  }
-}
-.scrap-stamp-in {
-  animation: scrap-stamp-in 320ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-}
 
-// Reveal au scroll (scroll-driven animations ; sans effet sur les
-// navigateurs qui ne supportent pas — le contenu reste visible).
-@supports (animation-timeline: view()) {
-  .scrap-reveal {
-    animation: scrap-reveal-in linear both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 45%;
+  :root {
+    font-family: var(--scrap-font-body);
+    font-size: var(--scrap-fs-text);
+    line-height: var(--scrap-lh);
+    color: var(--scrap-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  @keyframes scrap-reveal-in {
-    from {
-      opacity: 0;
-      transform: translateY(28px) rotate(0.5deg);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-}
 
-// Tremblement léger au survol (à poser sur un élément décoratif).
-@keyframes scrap-jitter {
-  0%,
-  100% {
-    transform: translate(0, 0) rotate(0);
+  /* Une zone qui force son thème reprend aussi l'encre de ce thème */
+  [data-scrap-theme] {
+    color: var(--scrap-ink);
   }
-  25% {
-    transform: translate(-1px, 1px) rotate(-0.4deg);
-  }
-  50% {
-    transform: translate(1px, -1px) rotate(0.4deg);
-  }
-  75% {
-    transform: translate(-1px, -1px) rotate(-0.2deg);
-  }
-}
-.scrap-jitter:hover {
-  animation: scrap-jitter 180ms linear infinite;
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .scrap-stamp-in,
-  .scrap-reveal,
-  .scrap-jitter:hover {
-    animation: none;
+  body {
+    margin: 0;
+    background: var(--scrap-bg);
   }
-}
 
-// ============================================================
-// Table
-// ============================================================
-.scrap-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: var(--scrap-border-w) solid var(--scrap-border);
-  box-shadow: var(--scrap-shadow);
-  background: var(--scrap-surface);
-  font-size: var(--scrap-fs-small);
+  :where(button, input, select, textarea) {
+    font: inherit;
+    color: inherit;
+  }
+  :where(button) {
+    cursor: pointer;
+  }
+  :where(img, svg, canvas) {
+    display: block;
+    max-width: 100%;
+  }
+  :where(svg.scrap-i) {
+    display: inline-block;
+  }
 
-  th {
+  ::selection {
+    background: var(--scrap-select);
+  }
+
+  :focus {
+    outline: none;
+  }
+  :focus-visible {
+    outline: var(--scrap-focus-ring);
+    outline-offset: var(--scrap-focus-offset);
+  }
+
+  /* Titres : casse de phrase, police d'affichage */
+  :where(h1, h2, h3, .scrap-display) {
     font-family: var(--scrap-font-display);
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    text-align: left;
-    background: var(--scrap-ink-strong);
-    color: var(--scrap-bg);
-    padding: var(--scrap-space-2) var(--scrap-space-3);
+    font-weight: var(--scrap-weight-title);
+    letter-spacing: var(--scrap-tracking-title);
+    line-height: 1.2;
+    color: var(--scrap-ink-strong);
+    margin: 0;
   }
-  td {
-    padding: var(--scrap-space-2) var(--scrap-space-3);
-    border-top: 1px solid var(--scrap-border-soft);
+  :where(h1) {
+    font-size: var(--scrap-fs-h1);
   }
-  tbody tr:nth-child(even) {
-    background: var(--scrap-bg-alt);
+  :where(h2) {
+    font-size: var(--scrap-fs-h2);
   }
-  tbody tr:hover {
-    background: color-mix(in srgb, var(--scrap-copper) 14%, transparent);
+  :where(h3) {
+    font-size: var(--scrap-fs-h3);
   }
-}
+  .scrap-display {
+    font-size: var(--scrap-fs-display);
+    line-height: 1.1;
+  }
 
-// ============================================================
-// Contrôles de formulaire natifs
-// ============================================================
-.scrap-select {
-  appearance: none;
-  font-family: var(--scrap-font-body);
-  font-size: var(--scrap-fs-body);
-  color: var(--scrap-ink);
-  background: var(--scrap-bg-alt);
-  border: var(--scrap-border-w) solid var(--scrap-border);
-  border-radius: var(--scrap-radius);
-  padding: 0.65em 2.4em 0.65em 0.9em;
-  cursor: pointer;
-  // chevron anguleux maison
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10'%3E%3Cpath d='M1 1h12L7 9 1 1Z' fill='%23956140'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.8em center;
-}
-.scrap-select:focus {
-  outline: none;
-  box-shadow: var(--scrap-shadow);
-}
+  :where(a) {
+    color: var(--scrap-accent-text);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
 
-// Checkbox « coche au marqueur » et radio « rivet »
-.scrap-checkbox,
-.scrap-radio {
-  appearance: none;
-  width: 1.35em;
-  height: 1.35em;
-  margin: 0;
-  flex: none;
-  border: var(--scrap-border-w) solid var(--scrap-border);
-  background: var(--scrap-bg-alt);
-  cursor: pointer;
-  display: inline-grid;
-  place-content: center;
-  vertical-align: middle;
-  transition: box-shadow var(--scrap-transition);
-}
-.scrap-checkbox {
-  border-radius: var(--scrap-radius);
-  transform: rotate(-2deg);
-}
-.scrap-radio {
-  border-radius: 50%;
-}
-.scrap-checkbox:focus-visible,
-.scrap-radio:focus-visible {
-  outline: none;
-  box-shadow: var(--scrap-shadow);
-}
-.scrap-checkbox::before {
-  content: '';
-  width: 1em;
-  height: 1em;
-  transform: scale(0) rotate(8deg);
-  transition: transform 120ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
-  background: var(--scrap-accent);
-  // coche irrégulière type marqueur
-  clip-path: polygon(14% 52%, 30% 40%, 44% 62%, 82% 8%, 98% 20%, 46% 96%, 4% 66%);
-}
-.scrap-checkbox:checked::before {
-  transform: scale(1.15) rotate(8deg);
-}
-.scrap-radio::before {
-  content: '';
-  width: 0.6em;
-  height: 0.6em;
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform 120ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
-  background: var(--scrap-accent);
-  box-shadow: inset 1px 1px 0 rgb(0 0 0 / 0.35); // effet rivet enfoncé
-}
-.scrap-radio:checked::before {
-  transform: scale(1);
-}
+  :where(code, kbd, samp, pre) {
+    font-family: var(--scrap-font-mono);
+  }
 
-// Ligne label + contrôle
-.scrap-choice {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--scrap-space-2);
-  cursor: pointer;
-  font-size: var(--scrap-fs-body);
-}
+  /* Icônes au trait, en currentColor */
+  .scrap-i {
+    width: var(--scrap-icon);
+    height: var(--scrap-icon);
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: var(--scrap-icon-stroke);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: middle;
+  }
+  .scrap-i--s {
+    width: calc(var(--scrap-icon) - 4px);
+    height: calc(var(--scrap-icon) - 4px);
+  }
+  .scrap-i--l {
+    width: calc(var(--scrap-icon) + 6px);
+    height: calc(var(--scrap-icon) + 6px);
+  }
 
-// Trait de séparation irrégulier (pinceau).
-.scrap-rule {
-  border: 0;
-  height: 6px;
-  margin: var(--scrap-space-4) 0;
-  background: currentColor;
-  color: var(--scrap-border);
-  clip-path: polygon(
-    0 40%,
-    8% 10%,
-    20% 55%,
-    33% 20%,
-    47% 70%,
-    60% 15%,
-    72% 60%,
-    85% 25%,
-    100% 50%,
-    100% 80%,
-    84% 55%,
-    70% 95%,
-    55% 45%,
-    41% 100%,
-    28% 60%,
-    14% 90%,
-    0 70%
-  );
+  .scrap-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* Visée de précision : canevas, découpe, sélection de zone */
+  .scrap-cursor-cross {
+    cursor:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cg fill='%23956140'%3E%3Crect x='11' y='0' width='2' height='8'/%3E%3Crect x='11' y='16' width='2' height='8'/%3E%3Crect x='0' y='11' width='8' height='2'/%3E%3Crect x='16' y='11' width='8' height='2'/%3E%3C/g%3E%3Crect x='10' y='10' width='4' height='4' fill='%23322216'/%3E%3C/svg%3E")
+        12 12,
+      crosshair;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

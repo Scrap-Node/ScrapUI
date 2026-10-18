@@ -1,0 +1,76 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Modale
+  // ------------------------------------------------------------
+  .scrap-dialog {
+    width: min(480px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    padding: 0;
+    border: 1px solid var(--scrap-line);
+    border-radius: var(--scrap-radius-xl);
+    background: var(--scrap-raised);
+    color: var(--scrap-ink);
+    box-shadow: var(--scrap-shadow-pop);
+  }
+  .scrap-dialog::backdrop {
+    background: var(--scrap-backdrop);
+  }
+  .scrap-dialog[open] {
+    animation: scrap-dialog-in 180ms var(--scrap-ease) both;
+  }
+  @keyframes scrap-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+  }
+  .scrap-dialog__panel {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 34px);
+  }
+  .scrap-dialog__head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--scrap-space-2);
+    margin: 0 32px;
+    padding: 32px 0 16px;
+    border-bottom: 1px solid var(--scrap-line);
+  }
+  .scrap-dialog__title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font: var(--scrap-weight-title) var(--scrap-fs-h2) / 1.25 var(--scrap-font-display);
+    color: var(--scrap-ink-strong);
+    letter-spacing: var(--scrap-tracking-title);
+  }
+  .scrap-dialog__close {
+    flex: none;
+    margin: -4px -8px 0 0;
+  }
+  .scrap-dialog__body {
+    padding: 16px 32px 28px;
+    overflow: auto;
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-dialog__body > :first-child {
+    margin-top: 0;
+  }
+  .scrap-dialog__body > :last-child {
+    margin-bottom: 0;
+  }
+  .scrap-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0 32px 32px;
+  }
+  .scrap-dialog__actions:empty {
+    display: none;
+  }
+  // Un conteneur `<div actions>` laisse ses boutons s'aligner comme s'ils étaient posés directement
+  .scrap-dialog__actions > div[actions] {
+    display: contents;
+  }
+}

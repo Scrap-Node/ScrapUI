@@ -1,0 +1,85 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Spinner et progression
+  // ------------------------------------------------------------
+  .scrap-spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--scrap-space-2);
+    color: var(--scrap-ink-muted);
+    font-size: var(--scrap-fs-s);
+  }
+  .scrap-spinner::before {
+    content: '';
+    flex: none;
+    width: var(--spinner-size, 20px);
+    height: var(--spinner-size, 20px);
+    border-radius: 50%;
+    border: var(--spinner-w, 3px) solid var(--scrap-line-strong);
+    border-top-color: var(--scrap-accent);
+    animation: scrap-spin 800ms linear infinite;
+  }
+  .scrap-spinner--s {
+    --spinner-size: 14px;
+    --spinner-w: 2px;
+  }
+  .scrap-spinner--l {
+    --spinner-size: 32px;
+  }
+  @keyframes scrap-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scrap-spinner::before {
+      animation-duration: 3s !important;
+      animation-iteration-count: infinite !important;
+    }
+  }
+
+  .scrap-progress {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    min-width: 0;
+  }
+  .scrap-progress__top {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--scrap-space-2);
+    font-size: var(--scrap-fs-s);
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-progress__top output {
+    color: var(--scrap-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .scrap-progress__bar {
+    position: relative;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--scrap-line-strong);
+    overflow: hidden;
+  }
+  .scrap-progress__bar > i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--value, 0%);
+    border-radius: inherit;
+    background: var(--scrap-accent);
+    transition: width 300ms var(--scrap-ease);
+  }
+  .scrap-progress--indeterminate .scrap-progress__bar > i {
+    width: 34%;
+    animation: scrap-indeterminate 1.3s var(--scrap-ease) infinite;
+  }
+  @keyframes scrap-indeterminate {
+    from {
+      left: -34%;
+    }
+    to {
+      left: 100%;
+    }
+  }
+}

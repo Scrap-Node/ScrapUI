@@ -1,0 +1,127 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Bouton
+  // ------------------------------------------------------------
+  .scrap-btn {
+    --btn-h: var(--scrap-control-m);
+    --btn-bg: var(--scrap-fill);
+    --btn-bg-hover: var(--scrap-fill-hover);
+    --btn-bg-press: var(--scrap-fill-press);
+    --btn-ink: var(--scrap-ink);
+    --btn-border: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--scrap-space-2);
+    height: var(--btn-h);
+    min-width: calc(var(--btn-h) * 2.25);
+    padding: 0 calc(var(--btn-h) * 0.45);
+    border: var(--scrap-border-field) solid var(--btn-border);
+    border-radius: var(--scrap-radius-control);
+    background: var(--btn-bg);
+    color: var(--btn-ink);
+    font: var(--scrap-weight-control) var(--scrap-fs-ui) / 1 var(--scrap-font-body);
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--scrap-dur) var(--scrap-ease),
+      border-color var(--scrap-dur) var(--scrap-ease),
+      color var(--scrap-dur) var(--scrap-ease),
+      transform var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-btn:hover {
+    background: var(--btn-bg-hover);
+  }
+  .scrap-btn:active {
+    background: var(--btn-bg-press);
+  }
+  .scrap-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .scrap-btn--primary {
+    --btn-bg: var(--scrap-accent);
+    --btn-bg-hover: var(--scrap-accent-hover);
+    --btn-bg-press: var(--scrap-accent-press);
+    --btn-ink: var(--scrap-accent-ink);
+  }
+  .scrap-btn--secondary {
+    --btn-bg: transparent;
+    --btn-bg-hover: var(--scrap-hover);
+    --btn-border: var(--scrap-line-strong);
+  }
+  .scrap-btn--secondary:hover {
+    --btn-border: var(--scrap-ink-faint);
+  }
+  .scrap-btn--ghost {
+    --btn-bg: transparent;
+    --btn-bg-hover: var(--scrap-hover);
+    --btn-bg-press: var(--scrap-press);
+    --btn-ink: var(--scrap-ink-muted);
+    min-width: 0;
+  }
+  .scrap-btn--ghost:hover {
+    color: var(--scrap-ink);
+  }
+  .scrap-btn--danger {
+    --btn-bg: var(--scrap-danger);
+    --btn-bg-hover: color-mix(in oklab, var(--scrap-danger) 86%, var(--scrap-black));
+    --btn-bg-press: color-mix(in oklab, var(--scrap-danger) 76%, var(--scrap-black));
+    --btn-ink: var(--scrap-danger-ink);
+  }
+  .scrap-btn--s {
+    --btn-h: var(--scrap-control-s);
+    font-size: var(--scrap-fs-s);
+  }
+  .scrap-btn--l {
+    --btn-h: var(--scrap-control-l);
+    font-size: var(--scrap-fs-l);
+  }
+  .scrap-btn--icon {
+    width: var(--btn-h);
+    min-width: 0;
+    padding: 0;
+    border-radius: var(--scrap-radius-m);
+  }
+  .scrap-btn--block {
+    width: 100%;
+  }
+  .scrap-btn[aria-pressed='true'] {
+    --btn-bg: var(--scrap-selected);
+    --btn-ink: var(--scrap-ink);
+  }
+  .scrap-btn:disabled,
+  .scrap-btn[aria-disabled='true'] {
+    --btn-bg: var(--scrap-fill);
+    --btn-bg-hover: var(--scrap-fill);
+    --btn-bg-press: var(--scrap-fill);
+    --btn-ink: var(--scrap-ink-faint);
+    --btn-border: transparent;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .scrap-btn--ghost:disabled {
+    --btn-bg: transparent;
+    --btn-bg-hover: transparent;
+  }
+
+  // ------------------------------------------------------------
+  // Raccourci clavier
+  // ------------------------------------------------------------
+  .scrap-kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    padding: 2px 5px;
+    border-radius: var(--scrap-radius-s);
+    background: var(--scrap-fill);
+    color: var(--scrap-ink-muted);
+    font-family: var(--scrap-font-body);
+    font-size: var(--scrap-fs-s);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+}

@@ -1,121 +1,200 @@
 // ============================================================
-// SCRAP UI — Design tokens
-// Palette issue de la charte graphique Scrap Node (03/03/26).
-// La palette est FIXE : identique sur tous les projets.
-// Seul le logo change d'un projet à l'autre.
+// SCRAP UI — Jetons
+// Palette de la charte graphique Scrap Node (03/03/26), puis les
+// rôles nommés par usage. Chaque couleur porte sa valeur claire et sa
+// valeur sombre dans light-dark() : color-scheme choisit, sur la page
+// (data-scrap-theme sur <html>) ou sur une zone.
 // ============================================================
 
-// --- Palette brute (ne pas utiliser directement dans les composants :
-//     passer par les tokens sémantiques ci-dessous) ---
+// Palette brute en variables Sass, pour les feuilles qui en ont besoin
+// au moment de la compilation. Dans les composants, passer par les rôles.
 $scrap-black: #000000;
-$scrap-bark: #322216; // brun foncé
-$scrap-copper: #956140; // brun cuivré
-$scrap-steel: #718993; // bleu-gris
+$scrap-bark: #322216;
+$scrap-copper: #956140;
+$scrap-steel: #718993;
 $scrap-white: #ffffff;
+$scrap-rust: #8a3324;
+$scrap-moss: #5f7a3f;
+$scrap-ochre: #b3822f;
 
-// --- Couleurs sémantiques (dérivées de l'esprit de la palette) ---
-$scrap-rust: #8a3324; // erreur — rouille
-$scrap-moss: #5f7a3f; // succès — mousse
-$scrap-ochre: #b3822f; // avertissement — ocre
+// L'ordre des couches : le CSS du projet consommateur, hors couche,
+// passe toujours devant celui de la lib.
+@layer scrap.tokens, scrap.base, scrap.components, scrap.affiche;
 
-@mixin semantic-tokens {
-  --scrap-danger: #{$scrap-rust};
-  --scrap-danger-ink: #{$scrap-white};
-  --scrap-success: #{$scrap-moss};
-  --scrap-success-ink: #{$scrap-white};
-  --scrap-warning: #{$scrap-ochre};
-  --scrap-warning-ink: #{$scrap-black};
-  --scrap-info: #{$scrap-steel};
-  --scrap-info-ink: #{$scrap-white};
-}
+@layer scrap.tokens {
+  :root {
+    /* Palette de la charte du 03/03/26 */
+    --scrap-black: #000000;
+    --scrap-bark: #322216;
+    --scrap-copper: #956140;
+    --scrap-steel: #718993;
+    --scrap-white: #ffffff;
+    /* États, tirés de l'esprit de la palette */
+    --scrap-rust: #8a3324;
+    --scrap-moss: #5f7a3f;
+    --scrap-ochre: #b3822f;
 
-@mixin light-tokens {
-  @include semantic-tokens;
-  --scrap-bg: #{$scrap-white};
-  --scrap-bg-alt: #f4efe9; // blanc cassé chaud dérivé du cuivre
-  --scrap-surface: #{$scrap-white};
-  --scrap-ink: #{$scrap-bark};
-  --scrap-ink-strong: #{$scrap-black};
-  --scrap-ink-muted: #7a6a5c;
-  --scrap-accent: #{$scrap-copper};
-  --scrap-accent-ink: #{$scrap-white};
-  --scrap-secondary: #{$scrap-steel};
-  --scrap-secondary-ink: #{$scrap-white};
-  --scrap-border: #{$scrap-bark};
-  --scrap-border-soft: #d8cec4;
-  --scrap-shadow: 4px 4px 0 #{$scrap-bark};
-  --scrap-shadow-hover: 6px 6px 0 #{$scrap-bark};
-  --scrap-texture-opacity: 0.05;
-}
+    /* Typographie de la charte : Helvetica pour les titres, Arial pour le texte */
+    --scrap-font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --scrap-font-body: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+    --scrap-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
-@mixin dark-tokens {
-  @include semantic-tokens;
-  // versions éclaircies pour rester lisibles sur fond sombre
-  --scrap-danger: #b0492f;
-  --scrap-success: #7d9c5a;
-  --scrap-warning: #cf9c45;
-  --scrap-bg: #1a120b; // brun quasi noir
-  --scrap-bg-alt: #{$scrap-bark};
-  --scrap-surface: #241910;
-  --scrap-ink: #efe6dc;
-  --scrap-ink-strong: #{$scrap-white};
-  --scrap-ink-muted: #a8968a;
-  --scrap-accent: #{$scrap-copper};
-  --scrap-accent-ink: #{$scrap-white};
-  --scrap-secondary: #{$scrap-steel};
-  --scrap-secondary-ink: #{$scrap-black};
-  --scrap-border: #efe6dc;
-  --scrap-border-soft: #4a3826;
-  --scrap-shadow: 4px 4px 0 #{$scrap-black};
-  --scrap-shadow-hover: 6px 6px 0 #{$scrap-black};
-  --scrap-texture-opacity: 0.09;
-}
+    /* Grain des surfaces de travail */
+    --scrap-grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --scrap-grain-opacity: 0.06;
 
-:root {
-  // Palette brute exposée en CSS custom properties
-  --scrap-black: #{$scrap-black};
-  --scrap-bark: #{$scrap-bark};
-  --scrap-copper: #{$scrap-copper};
-  --scrap-steel: #{$scrap-steel};
-  --scrap-white: #{$scrap-white};
+    /* ---------- Surfaces ---------- */
+    --scrap-bg: light-dark(#f5f4f3, #150e09);
+    --scrap-surface: light-dark(#ffffff, #1e140d);
+    --scrap-raised: light-dark(#ffffff, #271b11);
+    --scrap-sunken: light-dark(#faf9f8, #120c07);
+    --scrap-chrome: light-dark(#ffffff, #1e140d);
+    --scrap-field: light-dark(#ffffff, #150e09);
+    --scrap-field-border: var(--scrap-line-strong);
 
-  // --- Typographie (charte : Helvetica titres, Arial corps) ---
-  --scrap-font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --scrap-font-body: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-  --scrap-fs-hero: clamp(2.5rem, 6vw, 4.5rem);
-  --scrap-fs-h1: clamp(2rem, 4vw, 3rem);
-  --scrap-fs-h2: clamp(1.5rem, 3vw, 2rem);
-  --scrap-fs-h3: 1.25rem;
-  --scrap-fs-body: 1rem;
-  --scrap-fs-small: 0.875rem;
+    /* ---------- Interaction ---------- */
+    --scrap-hover: light-dark(#f1efee, #322216);
+    --scrap-press: light-dark(#e8e4e1, #3c2d22);
+    --scrap-selected: light-dark(#f4efec, #3c2d22);
+    --scrap-fill: light-dark(#f1efee, #322216);
+    --scrap-fill-hover: light-dark(#e8e4e1, #3c2d22);
+    --scrap-fill-press: light-dark(#ddd7d3, #46382d);
 
-  // --- Espacements ---
-  --scrap-space-1: 0.25rem;
-  --scrap-space-2: 0.5rem;
-  --scrap-space-3: 1rem;
-  --scrap-space-4: 1.5rem;
-  --scrap-space-5: 2.5rem;
-  --scrap-space-6: 4rem;
+    /* ---------- Filets ---------- */
+    --scrap-line: light-dark(#e4e2e1, #46382d);
+    --scrap-line-soft: light-dark(#eeeceb, #2f2219);
+    --scrap-line-strong: light-dark(#c6c1be, #5f5349);
 
-  // --- Divers ---
-  --scrap-radius: 2px; // esprit brut : angles quasi vifs
-  --scrap-border-w: 2px;
-  --scrap-transition: 150ms cubic-bezier(0.2, 0.8, 0.3, 1);
+    /* ---------- Encre ---------- */
+    --scrap-ink: light-dark(#322216, #efe6dc);
+    --scrap-ink-strong: light-dark(#000000, #ffffff);
+    --scrap-ink-muted: light-dark(#655950, #a8968a);
+    --scrap-ink-faint: light-dark(#948c86, #7b6b60);
 
-  @include light-tokens;
-}
+    /* ---------- Rôles des couleurs de la charte ---------- */
+    --scrap-accent: var(--scrap-copper);
+    --scrap-accent-hover: light-dark(#7f5236, #a07153);
+    --scrap-accent-press: light-dark(#6f4830, #8a5a3b);
+    --scrap-accent-ink: var(--scrap-white);
+    --scrap-accent-text: light-dark(#956140, #ba9883);
+    --scrap-focus: light-dark(#5d7179, #95a7ae);
+    --scrap-select: rgb(113 137 147 / 0.24);
+    --scrap-strong: light-dark(#322216, #efe6dc);
+    --scrap-strong-ink: light-dark(#ffffff, #1e140d);
 
-// Mode sombre : automatique via l'OS…
-@media (prefers-color-scheme: dark) {
-  :root:not([data-scrap-theme='light']) {
-    @include dark-tokens;
+    /* ---------- États ---------- */
+    --scrap-danger: var(--scrap-rust);
+    --scrap-danger-ink: var(--scrap-white);
+    --scrap-danger-text: light-dark(#8a3324, #d27f6b);
+    --scrap-success: var(--scrap-moss);
+    --scrap-success-ink: var(--scrap-white);
+    --scrap-success-text: light-dark(#4f6a31, #8fae6c);
+    --scrap-warning: var(--scrap-ochre);
+    --scrap-warning-ink: var(--scrap-black);
+    --scrap-warning-text: light-dark(#7d5410, #d3a050);
+    --scrap-info: var(--scrap-steel);
+    --scrap-info-ink: var(--scrap-black);
+    --scrap-info-text: light-dark(#4b626b, #9ab0ba);
+
+    /* ---------- Données (outils) ----------
+       Gris l'original, cuivre ce qui est altéré, encre la lecture,
+       bleu-gris la boucle et la piste active. */
+    --scrap-data-original: var(--scrap-line-strong);
+    --scrap-data-altered: var(--scrap-copper);
+    --scrap-data-playhead: var(--scrap-ink);
+    --scrap-data-loop: var(--scrap-steel);
+    --scrap-data-added: var(--scrap-moss);
+    --scrap-data-removed: var(--scrap-rust);
+
+    /* ---------- Code ---------- */
+    --scrap-code-keyword: light-dark(#824f2f, #ce9674);
+    --scrap-code-property: light-dark(#4b626b, #90a9b4);
+    --scrap-code-number: light-dark(#815300, #cd9b4a);
+    --scrap-code-string: light-dark(#4d672d, #93b073);
+    --scrap-code-tag: light-dark(#963e2e, #e78673);
+    --scrap-code-comment: light-dark(#8f8076, #7b6b60);
+    --scrap-code-text: var(--scrap-ink);
+
+    /* ---------- Élévation ---------- */
+    --scrap-shadow-pop:
+      0 1px 2px light-dark(rgb(50 34 22 / 0.12), rgb(0 0 0 / 0.4)),
+      0 8px 24px light-dark(rgb(50 34 22 / 0.16), rgb(0 0 0 / 0.45));
+    --scrap-backdrop: rgb(21 14 9 / 0.6);
+
+    /* ---------- Formes ---------- */
+    --scrap-radius-s: 4px;
+    --scrap-radius-m: 8px;
+    --scrap-radius-l: 12px;
+    --scrap-radius-xl: 16px;
+    --scrap-radius-control: 999px;
+    --scrap-radius-field: 8px;
+    --scrap-control-s: 24px;
+    --scrap-control-m: 32px;
+    --scrap-control-l: 40px;
+    --scrap-field-h: 32px;
+    --scrap-border-field: 2px;
+
+    /* ---------- Typographie ---------- */
+    --scrap-fs-xs: 11px;
+    --scrap-fs-s: 12px;
+    --scrap-fs-ui: 14px;
+    --scrap-fs-text: 14px;
+    --scrap-fs-l: 16px;
+    --scrap-fs-h3: 18px;
+    --scrap-fs-h2: 22px;
+    --scrap-fs-h1: 28px;
+    --scrap-fs-display: 40px;
+    --scrap-lh: 1.5;
+    --scrap-weight-control: 700;
+    --scrap-weight-strong: 700;
+    --scrap-weight-title: 800;
+    --scrap-tracking-title: -0.01em;
+
+    /* ---------- Espacements ---------- */
+    --scrap-space-1: 4px;
+    --scrap-space-2: 8px;
+    --scrap-space-3: 12px;
+    --scrap-space-4: 16px;
+    --scrap-space-5: 24px;
+    --scrap-space-6: 32px;
+
+    /* ---------- Mouvement, focus, icônes ---------- */
+    --scrap-dur: 130ms;
+    --scrap-ease: cubic-bezier(0.45, 0, 0.4, 1);
+    --scrap-focus-ring: 2px solid var(--scrap-focus);
+    --scrap-focus-offset: 2px;
+    --scrap-icon: 18px;
+    --scrap-icon-stroke: 1.6;
+
+    /* ---------- Anciens noms ----------
+       Conservés pour les projets existants, retirés à la prochaine
+       version majeure. */
+    --scrap-bg-alt: var(--scrap-sunken);
+    --scrap-border: var(--scrap-line-strong);
+    --scrap-border-soft: var(--scrap-line);
+    --scrap-secondary: var(--scrap-info);
+    --scrap-secondary-ink: var(--scrap-info-ink);
+    --scrap-shadow: var(--scrap-shadow-pop);
+    --scrap-shadow-hover: var(--scrap-shadow-pop);
+    --scrap-texture-opacity: var(--scrap-grain-opacity);
+    --scrap-fs-hero: var(--scrap-fs-display);
+    --scrap-fs-body: var(--scrap-fs-text);
+    --scrap-fs-small: var(--scrap-fs-s);
+    --scrap-radius: var(--scrap-radius-s);
+    --scrap-border-w: var(--scrap-border-field);
+    --scrap-transition: var(--scrap-dur) var(--scrap-ease);
+
+    color-scheme: light dark;
   }
-}
 
-// …ou forcé via <html data-scrap-theme="dark|light">
-:root[data-scrap-theme='dark'] {
-  @include dark-tokens;
-}
-:root[data-scrap-theme='light'] {
-  @include light-tokens;
+  /* Thème : celui du système par défaut, forcé sur la page ou sur une zone */
+  [data-scrap-theme='light'] {
+    color-scheme: light;
+  }
+  [data-scrap-theme='dark'] {
+    color-scheme: dark;
+  }
+  [data-scrap-theme='system'] {
+    color-scheme: light dark;
+  }
 }

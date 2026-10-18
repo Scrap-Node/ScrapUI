@@ -1,0 +1,70 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Bouton d'action (icône seule) et barre d'outils
+  // ------------------------------------------------------------
+  .scrap-icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: var(--scrap-control-m);
+    height: var(--scrap-control-m);
+    padding: 0;
+    border: 0;
+    border-radius: var(--scrap-radius-m);
+    background: transparent;
+    color: var(--scrap-ink-muted);
+    cursor: pointer;
+    transition:
+      background-color var(--scrap-dur) var(--scrap-ease),
+      color var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-icon-btn:hover {
+    background: var(--scrap-hover);
+    color: var(--scrap-ink);
+  }
+  .scrap-icon-btn:active {
+    background: var(--scrap-press);
+  }
+  .scrap-icon-btn[aria-pressed='true'] {
+    background: var(--scrap-selected);
+    color: var(--scrap-accent-text);
+  }
+  .scrap-icon-btn:disabled {
+    color: var(--scrap-ink-faint);
+    background: transparent;
+    cursor: not-allowed;
+  }
+  .scrap-icon-btn--s {
+    width: var(--scrap-control-s);
+    height: var(--scrap-control-s);
+  }
+
+  .scrap-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .scrap-toolbar--vertical {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .scrap-toolbar--panel {
+    padding: 6px;
+    border: 1px solid var(--scrap-line);
+    border-radius: var(--scrap-radius-l);
+    background: var(--scrap-surface);
+  }
+  .scrap-toolbar__sep {
+    width: 1px;
+    height: calc(var(--scrap-control-m) - 12px);
+    margin: 0 var(--scrap-space-1);
+    background: var(--scrap-line);
+  }
+  .scrap-toolbar--vertical .scrap-toolbar__sep {
+    width: calc(var(--scrap-control-m) - 12px);
+    height: 1px;
+    margin: var(--scrap-space-1) 0;
+  }
+  .scrap-toolbar__spacer {
+    flex: 1;
+  }
+}

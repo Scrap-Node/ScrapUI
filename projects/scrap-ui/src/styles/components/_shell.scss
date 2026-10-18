@@ -1,0 +1,109 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Coquille d'application
+  // ------------------------------------------------------------
+  .scrap-shell {
+    --shell-nav: 240px;
+    --shell-aside: 300px;
+    --shell-head: 52px;
+    --shell-status: 24px;
+    display: grid;
+    grid-template-columns: var(--shell-nav) minmax(0, 1fr) var(--shell-aside);
+    grid-template-rows: var(--shell-head) minmax(0, 1fr) var(--shell-status);
+    grid-template-areas: 'brand head head' 'nav main aside' 'status status status';
+    min-height: 0;
+    background: var(--scrap-bg);
+    color: var(--scrap-ink);
+  }
+  .scrap-shell--no-aside {
+    --shell-aside: 0px;
+    grid-template-areas: 'brand head head' 'nav main main' 'status status status';
+  }
+  .scrap-shell__brand {
+    grid-area: brand;
+    display: flex;
+    align-items: center;
+    gap: var(--scrap-space-2);
+    min-width: 0;
+    padding: 0 var(--scrap-space-3) 0 var(--scrap-space-4);
+    overflow: hidden;
+    border-bottom: 1px solid var(--scrap-line);
+    background: var(--scrap-chrome);
+    color: var(--scrap-ink-strong);
+    font: var(--scrap-weight-strong) var(--scrap-fs-l) / 1 var(--scrap-font-display);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .scrap-shell__head {
+    grid-area: head;
+    display: flex;
+    align-items: center;
+    gap: var(--scrap-space-2);
+    min-width: 0;
+    padding: 0 var(--scrap-space-3);
+    border-bottom: 1px solid var(--scrap-line);
+    background: var(--scrap-chrome);
+  }
+  .scrap-shell__nav {
+    grid-area: nav;
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+    border-right: 1px solid var(--scrap-line);
+    background: var(--scrap-surface);
+  }
+  .scrap-shell__main {
+    grid-area: main;
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+    background: var(--scrap-bg);
+  }
+  .scrap-shell__aside {
+    grid-area: aside;
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+    border-left: 1px solid var(--scrap-line);
+    background: var(--scrap-surface);
+  }
+  .scrap-shell--no-aside > .scrap-shell__aside {
+    display: none;
+  }
+  .scrap-shell__status {
+    grid-area: status;
+    min-width: 0;
+  }
+  .scrap-shell__status > .scrap-statusbar {
+    height: 100%;
+  }
+
+  // Écran étroit : les régions s'empilent et la coquille défile, plutôt que
+  // de déborder de la page en écrasant la zone de travail.
+  @media (max-width: 720px) {
+    .scrap-shell,
+    .scrap-shell--no-aside {
+      grid-template-columns: minmax(0, 1fr);
+      // max-content : chaque région garde sa hauteur, c'est la coquille qui défile.
+      grid-template-rows:
+        var(--shell-head) max-content max-content minmax(240px, max-content)
+        max-content var(--shell-status);
+      grid-template-areas: 'brand' 'head' 'nav' 'main' 'aside' 'status';
+      overflow: auto;
+    }
+    .scrap-shell__head {
+      flex-wrap: wrap;
+      min-height: var(--shell-head);
+    }
+    .scrap-shell__nav,
+    .scrap-shell__aside {
+      max-height: 40vh;
+      border-right: 0;
+      border-left: 0;
+      border-bottom: 1px solid var(--scrap-line);
+    }
+  }
+}

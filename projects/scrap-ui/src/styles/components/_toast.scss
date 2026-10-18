@@ -1,0 +1,117 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Toasts
+  // ------------------------------------------------------------
+  .scrap-toasts {
+    position: fixed;
+    z-index: 900;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    pointer-events: none;
+  }
+  .scrap-toast {
+    --toast-bg: light-dark(#322216, #4b3d32);
+    --toast-ink: #ffffff;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--scrap-space-3);
+    min-height: 48px;
+    max-width: 100%;
+    padding: 8px 8px 8px 16px;
+    border-radius: var(--scrap-radius-l);
+    background: var(--toast-bg);
+    color: var(--toast-ink);
+    box-shadow: var(--scrap-shadow-pop);
+    font-size: var(--scrap-fs-ui);
+    animation: scrap-toast-in 240ms var(--scrap-ease) both;
+  }
+  .scrap-toast--success {
+    --toast-bg: var(--scrap-moss);
+  }
+  .scrap-toast--danger {
+    --toast-bg: var(--scrap-rust);
+  }
+  .scrap-toast--info {
+    --toast-bg: #4f6168;
+  }
+  .scrap-toast--warning {
+    --toast-bg: var(--scrap-ochre);
+    --toast-ink: #000000;
+  }
+  .scrap-toast.is-leaving {
+    animation: scrap-toast-out 160ms var(--scrap-ease) both;
+  }
+  @keyframes scrap-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  @keyframes scrap-toast-out {
+    to {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .scrap-toast__icon {
+    flex: none;
+  }
+  .scrap-toast__text {
+    flex: 1;
+    min-width: 0;
+  }
+  .scrap-toast__action {
+    height: var(--scrap-control-s);
+    padding: 0 10px;
+    border: 1px solid rgb(255 255 255 / 0.7);
+    border-radius: var(--scrap-radius-control);
+    background: transparent;
+    color: inherit;
+    font: 700 var(--scrap-fs-s) / 1 var(--scrap-font-body);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .scrap-toast__action:hover {
+    background: rgb(255 255 255 / 0.12);
+  }
+  .scrap-toast--warning .scrap-toast__action {
+    border-color: rgb(0 0 0 / 0.6);
+  }
+  .scrap-toast__close {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--scrap-radius-m);
+    background: transparent;
+    color: inherit;
+    opacity: 0.75;
+    cursor: pointer;
+  }
+  .scrap-toast__close:hover {
+    opacity: 1;
+    background: rgb(255 255 255 / 0.12);
+  }
+
+  // Deux régions live : urgente (danger) et polie (le reste)
+  .scrap-toasts__region {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+  }
+  .scrap-toasts__region:empty {
+    display: none;
+  }
+  .scrap-toast > scrap-icon {
+    flex: none;
+  }
+}

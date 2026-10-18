@@ -1,0 +1,284 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Audio : forme d'onde, oscilloscope, VU-mètre
+  // ------------------------------------------------------------
+  .scrap-wave {
+    display: block;
+    width: 100%;
+    height: 72px;
+    cursor: pointer;
+  }
+  .scrap-wave rect {
+    fill: var(--scrap-data-original);
+    rx: 0.25;
+  }
+  .scrap-wave rect.is-played,
+  .scrap-wave rect.is-altered {
+    fill: var(--scrap-data-altered);
+  }
+  .scrap-wave .scrap-wave__head {
+    fill: var(--scrap-data-playhead);
+  }
+  .scrap-wave:focus-visible {
+    outline: var(--scrap-focus-ring);
+    outline-offset: 3px;
+  }
+  .scrap-scope {
+    display: block;
+    width: 100%;
+    height: 72px;
+  }
+  .scrap-scope .axis {
+    stroke: var(--scrap-line);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .scrap-scope polyline {
+    fill: none;
+    stroke: var(--scrap-accent);
+    stroke-width: 0.8;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .scrap-vu {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(2px, 1fr);
+    gap: 2px;
+    height: 14px;
+    min-width: 96px;
+  }
+  .scrap-vu i {
+    border-radius: 1px;
+    background: var(--scrap-line);
+  }
+  .scrap-vu i.on {
+    background: var(--scrap-success);
+  }
+  .scrap-vu i.on.hot {
+    background: var(--scrap-warning);
+  }
+  .scrap-vu i.on.clip {
+    background: var(--scrap-danger);
+  }
+
+  // ------------------------------------------------------------
+  // Transport et timecode
+  // ------------------------------------------------------------
+  .scrap-transport {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+  }
+  .scrap-transport__play {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin: 0 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--scrap-strong);
+    color: var(--scrap-strong-ink);
+    cursor: pointer;
+    transition: background-color var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-transport__play:hover {
+    background: color-mix(in oklab, var(--scrap-strong) 86%, var(--scrap-copper));
+  }
+  .scrap-timecode {
+    margin: 0 8px;
+    color: var(--scrap-ink-strong);
+    font: 700 var(--scrap-fs-l) / 1 var(--scrap-font-body);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .scrap-timecode small {
+    color: var(--scrap-ink-faint);
+    font-size: var(--scrap-fs-s);
+    font-weight: 400;
+  }
+  .scrap-transport__end {
+    display: flex;
+    align-items: center;
+    gap: var(--scrap-space-3);
+    margin-left: auto;
+  }
+
+  // ------------------------------------------------------------
+  // Timeline : règle, pistes, sélection, tête de lecture, repères
+  // ------------------------------------------------------------
+  .scrap-timeline {
+    --gutter: 40px;
+    --ruler-h: 24px;
+    --lane-h: 64px;
+    position: relative;
+    display: grid;
+    border: 1px solid var(--scrap-line);
+    border-radius: var(--scrap-radius-m);
+    background: var(--scrap-sunken);
+    overflow: hidden;
+    user-select: none;
+  }
+  .scrap-timeline::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--scrap-grain-url);
+    opacity: var(--scrap-grain-opacity);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .scrap-timeline__row {
+    display: grid;
+    grid-template-columns: var(--gutter) minmax(0, 1fr);
+  }
+  .scrap-timeline__row + .scrap-timeline__row {
+    border-top: 1px solid var(--scrap-line);
+  }
+  .scrap-ruler-corner {
+    border-right: 1px solid var(--scrap-line);
+    background: var(--scrap-surface);
+  }
+  .scrap-ruler {
+    position: relative;
+    height: var(--ruler-h);
+    overflow: hidden;
+    background: var(--scrap-surface);
+    color: var(--scrap-ink-faint);
+    font-size: var(--scrap-fs-xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .scrap-ruler span {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    padding-left: 4px;
+    border-left: 1px solid var(--scrap-line-strong);
+    line-height: calc(var(--ruler-h) - 8px);
+    white-space: nowrap;
+  }
+  .scrap-ruler span.minor {
+    height: 6px;
+    border-color: var(--scrap-line);
+  }
+  .scrap-lane__label {
+    display: grid;
+    place-items: center;
+    border-right: 1px solid var(--scrap-line);
+    background: var(--scrap-surface);
+    color: var(--scrap-ink-faint);
+    font-size: var(--scrap-fs-xs);
+    font-weight: var(--scrap-weight-strong);
+  }
+  .scrap-lane {
+    position: relative;
+    height: var(--lane-h);
+  }
+  .scrap-lane > svg {
+    position: absolute;
+    inset: 6px 0;
+    width: 100%;
+    height: calc(100% - 12px);
+  }
+  .scrap-lane > svg rect {
+    fill: var(--scrap-data-original);
+  }
+  .scrap-lane > svg rect.is-altered {
+    fill: var(--scrap-data-altered);
+  }
+  .scrap-timeline__overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--gutter);
+    right: 0;
+    pointer-events: none;
+  }
+  .scrap-timeline__hit {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--gutter);
+    right: 0;
+    cursor: text;
+    touch-action: none;
+  }
+  .scrap-selection {
+    position: absolute;
+    top: var(--ruler-h);
+    bottom: 0;
+    border-left: 1px solid var(--scrap-data-loop);
+    border-right: 1px solid var(--scrap-data-loop);
+    background: color-mix(in oklab, var(--scrap-data-loop) 22%, transparent);
+  }
+  .scrap-selection[hidden] {
+    display: none;
+  }
+  .scrap-playhead {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--scrap-data-playhead);
+  }
+  .scrap-playhead::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -5px;
+    border: 6px solid transparent;
+    border-top-color: var(--scrap-data-playhead);
+  }
+  .scrap-marker {
+    position: absolute;
+    top: var(--ruler-h);
+    bottom: 0;
+    border-left: 1px dashed var(--scrap-data-altered);
+  }
+  .scrap-marker span {
+    position: absolute;
+    top: 4px;
+    left: 3px;
+    display: grid;
+    place-items: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: var(--scrap-radius-s);
+    background: var(--scrap-copper);
+    color: var(--scrap-white);
+    font-size: var(--scrap-fs-xs);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  // Hôtes Angular des visualisations
+  scrap-wave-bars,
+  scrap-wave-line {
+    display: block;
+    height: 72px;
+  }
+  scrap-wave-bars > .scrap-wave,
+  scrap-wave-line > .scrap-scope {
+    height: 100%;
+  }
+  scrap-vu-meter,
+  scrap-wave-live {
+    display: block;
+  }
+  // Dans une piste, la forme d'onde remplit la piste et laisse la timeline gérer le pointeur
+  .scrap-lane > scrap-wave-bars {
+    position: absolute;
+    inset: 6px 0;
+    height: auto;
+  }
+  .scrap-wave.is-static {
+    cursor: inherit;
+  }
+}
