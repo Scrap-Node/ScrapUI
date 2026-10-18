@@ -257,11 +257,14 @@ tant que les références Linux n'existent pas. Elles se génèrent dans GitHub
 Actions, via le workflow `visual-baselines` :
 
 ```bash
-gh workflow run visual-baselines.yml
+gh workflow run visual-baselines.yml --ref ma-branche
 gh run watch
-gh run download -n visual-baselines-linux -D e2e/__screenshots__
+gh run download -n visual-baselines-linux -D e2e/__screenshots__/linux
 git add e2e/__screenshots__/linux && git commit -m "références visuelles Linux"
 ```
+
+`--ref` désigne la branche à rendre. L'artefact contient les images à plat,
+d'où la cible `linux/` du téléchargement.
 
 Même séquence après tout changement de rendu volontaire : relancer le workflow,
 récupérer l'artefact, **relire le diff des images** avant de commiter — c'est là
