@@ -9,7 +9,7 @@ import { StoryCase, StoryPage } from '../story-page';
   template: `
     <story-page
       title="Curseurs"
-      lead="Piste remplie côté cuivre, poignée en rivet, crans optionnels."
+      lead="Une valeur continue&nbsp;: volume, densité, zoom. La partie réglée est en cuivre&nbsp;; les nombres suivent l'usage français."
     >
       <story-case name="Avec icône de volume" [stack]="true">
         @for (v of volumes; track v.label) {
@@ -19,29 +19,39 @@ import { StoryCase, StoryPage } from '../story-page';
         }
       </story-case>
 
+      <story-case name="Étiquette et valeur affichées" [stack]="true">
+        <scrap-slider [(value)]="density" label="Densité" showValue unit="%" [showBounds]="false" />
+        <scrap-slider
+          [(value)]="offset"
+          label="Décalage"
+          showValue
+          unit="s"
+          [min]="0"
+          [max]="6.4"
+          [step]="0.1"
+          [showBounds]="false"
+        />
+      </story-case>
+
       <story-case
         name="Crans"
-        note="ticks suit le step tant qu'il reste sous 20 crans."
+        note="Les crans suivent le pas tant qu'il en reste moins de 20."
         [stack]="true"
       >
-        <scrap-slider [(value)]="stepped" [step]="10" [ticks]="true" label="Réglage par crans" />
-        <scrap-slider [(value)]="fine" [step]="1" [ticks]="true" label="Réglage fin" />
-      </story-case>
-
-      <story-case name="Sans bornes / désactivé" [stack]="true">
-        <scrap-slider [(value)]="bare" [showBounds]="false" label="Sans bornes" />
-        <scrap-slider [(value)]="locked" [disabled]="true" label="Verrouillé" />
-      </story-case>
-
-      <story-case name="Échelle personnalisée" [stack]="true">
         <scrap-slider
-          [(value)]="temperature"
-          [min]="-20"
-          [max]="60"
-          [step]="5"
-          [ticks]="true"
-          label="Température"
+          [(value)]="block"
+          label="Taille de bloc"
+          [min]="64"
+          [max]="1024"
+          [step]="64"
+          ticks
         />
+        <scrap-slider [(value)]="fine" label="Réglage fin" ticks />
+      </story-case>
+
+      <story-case name="Sans bornes, désactivé" [stack]="true">
+        <scrap-slider [(value)]="bare" [showBounds]="false" label="Sans bornes" />
+        <scrap-slider [(value)]="locked" disabled label="Verrouillé" />
       </story-case>
     </story-page>
   `,
@@ -53,11 +63,12 @@ export class SlidersStory {
     { label: 'Volume coupé', value: signal(0) },
   ];
 
-  readonly stepped = signal(70);
+  readonly density = signal(35);
+  readonly offset = signal(2.4);
+  readonly block = signal(512);
   readonly fine = signal(42);
   readonly bare = signal(25);
   readonly locked = signal(65);
-  readonly temperature = signal(20);
 
   iconFor(v: number): ScrapIconName {
     return v === 0 ? 'mute' : v < 50 ? 'volume-low' : 'volume';

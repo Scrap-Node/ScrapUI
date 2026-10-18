@@ -1,18 +1,25 @@
 <scrap-header appName="Scrap UI" homeHref="/fondations">
-  <span logo class="logo">SU</span>
+  <span logo class="logo" aria-hidden="true"><scrap-icon name="node" [size]="18" /></span>
+  <button actions scrap-icon-button label="Commandes" shortcut="mod+k" (click)="commands.open()">
+    <scrap-icon name="command" />
+  </button>
   <scrap-theme-toggle actions />
 </scrap-header>
 
 <div class="shell">
-  <nav class="stories" aria-label="Composants">
-    <p class="stories-title">Vitrine</p>
-    <ul>
-      @for (story of stories; track story.path) {
-        <li>
-          <a [routerLink]="story.path" routerLinkActive="on">{{ story.title }}</a>
-        </li>
-      }
-    </ul>
+  <nav class="stories" aria-label="Pages de la vitrine">
+    @for (group of groups; track group.name) {
+      <p class="stories-group" [id]="'nav-' + $index">{{ group.name }}</p>
+      <ul [attr.aria-labelledby]="'nav-' + $index">
+        @for (story of group.stories; track story.path) {
+          <li>
+            <a [routerLink]="story.path" routerLinkActive="on" ariaCurrentWhenActive="page">{{
+              story.title
+            }}</a>
+          </li>
+        }
+      </ul>
+    }
   </nav>
 
   <main id="contenu">
@@ -21,10 +28,8 @@
 </div>
 
 <scrap-footer appName="Scrap UI">
-  <div>
-    <h3>Direction artistique</h3>
-    <p>Palette et typos figées.<br />Seul le logo change d'un projet à l'autre.</p>
-  </div>
+  <span>Les jetons, les composants Angular et la feuille CSS des projets Scrap Node.</span>
 </scrap-footer>
 
 <scrap-toasts />
+<scrap-command-palette />

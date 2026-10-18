@@ -8,20 +8,26 @@
 export interface Story {
   readonly path: string;
   readonly title: string;
+  /** Rubrique de la navigation. Les stories d'une rubrique se suivent. */
+  readonly group: string;
 }
 
 export const STORIES: readonly Story[] = [
-  { path: 'fondations', title: 'Fondations' },
-  { path: 'layout', title: 'Layout' },
-  { path: 'boutons', title: 'Boutons' },
-  { path: 'badges', title: 'Badges' },
-  { path: 'cartes', title: 'Cartes' },
-  { path: 'formulaires', title: 'Formulaires' },
-  { path: 'onglets', title: 'Onglets' },
-  { path: 'curseurs', title: 'Curseurs' },
-  { path: 'modale-toasts', title: 'Modale & toasts' },
-  { path: 'etats', title: 'États' },
-  { path: 'icones', title: 'Icônes' },
-  { path: 'audio', title: 'Audio' },
-  { path: 'utilitaires', title: 'Utilitaires' },
+  { path: 'fondations', title: 'Fondations', group: 'Bases' },
+  { path: 'icones', title: 'Icônes', group: 'Bases' },
+  { path: 'boutons', title: 'Boutons', group: 'Composants' },
+  { path: 'badges', title: 'Badges', group: 'Composants' },
+  { path: 'cartes', title: 'Cartes', group: 'Composants' },
+  { path: 'formulaires', title: 'Formulaires', group: 'Composants' },
+  { path: 'curseurs', title: 'Curseurs', group: 'Composants' },
+  { path: 'onglets', title: 'Onglets', group: 'Composants' },
+  { path: 'modale-toasts', title: 'Modale et toasts', group: 'Composants' },
+  { path: 'etats', title: 'États', group: 'Composants' },
+  { path: 'donnees', title: 'Données', group: 'Composants' },
+  { path: 'outils', title: 'Outils et menus', group: 'Outils de création' },
+  { path: 'navigation', title: 'Navigation', group: 'Outils de création' },
+  { path: 'coquille', title: "Coquille d'application", group: 'Outils de création' },
+  { path: 'audio', title: 'Audio et montage', group: 'Outils de création' },
+  { path: 'layout', title: 'En-tête et pied de page', group: 'Pages' },
+  { path: 'affiche', title: 'Affiche', group: 'Pages' },
 ];

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 /**
  * Gabarit commun à toutes les stories : titre, chapeau, et blocs de démo.
@@ -22,15 +22,22 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   styles: `
     :host {
       display: block;
-      max-width: 76rem;
+      max-width: 72rem;
       margin: 0 auto;
-      padding: var(--scrap-space-5) var(--scrap-space-4) var(--scrap-space-6);
+      padding: var(--scrap-space-6) var(--scrap-space-5) var(--scrap-space-6);
+    }
+    h1 {
+      margin: 0 0 var(--scrap-space-2);
+      font: var(--scrap-weight-title) var(--scrap-fs-h1) / 1.2 var(--scrap-font-display);
+      letter-spacing: var(--scrap-tracking-title);
+      color: var(--scrap-ink-strong);
     }
     .lead {
-      max-width: 62ch;
+      max-width: 64ch;
+      margin: 0 0 var(--scrap-space-6);
       color: var(--scrap-ink-muted);
-      font-size: 1.05rem;
-      margin: 0 0 var(--scrap-space-5);
+      font-size: var(--scrap-fs-l);
+      line-height: 1.5;
     }
   `,
 })
@@ -55,26 +62,29 @@ export class StoryPage {
   styles: `
     :host {
       display: block;
-      margin-bottom: var(--scrap-space-5);
+      margin-bottom: var(--scrap-space-6);
     }
     h2 {
-      font-size: var(--scrap-fs-h3);
-      margin-bottom: var(--scrap-space-2);
+      margin: 0 0 var(--scrap-space-1);
+      font: var(--scrap-weight-strong) var(--scrap-fs-h3) / 1.3 var(--scrap-font-display);
+      color: var(--scrap-ink-strong);
     }
     .note {
+      max-width: 64ch;
       margin: 0 0 var(--scrap-space-3);
       color: var(--scrap-ink-muted);
-      font-size: var(--scrap-fs-small);
-      max-width: 62ch;
+      font-size: var(--scrap-fs-ui);
     }
     .stage {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: var(--scrap-space-4);
-      padding: var(--scrap-space-4);
-      border: var(--scrap-border-w) dashed var(--scrap-border-soft);
-      border-radius: var(--scrap-radius);
+      margin-top: var(--scrap-space-3);
+      padding: var(--scrap-space-5);
+      border: 1px solid var(--scrap-line);
+      border-radius: var(--scrap-radius-l);
+      background: var(--scrap-surface);
     }
     .stage.stack {
       flex-direction: column;
@@ -86,5 +96,5 @@ export class StoryCase {
   readonly name = input.required<string>();
   readonly note = input<string>();
   /** Empile les cas verticalement plutôt qu'en ligne. */
-  readonly stack = input(false);
+  readonly stack = input(false, { transform: booleanAttribute });
 }
