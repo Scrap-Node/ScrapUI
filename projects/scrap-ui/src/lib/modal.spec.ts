@@ -65,16 +65,18 @@ describe('ScrapModal', () => {
   it('se referme via le bouton de fermeture', async () => {
     fixture.componentInstance.open.set(true);
     await fixture.whenStable();
-    (fixture.nativeElement.querySelector('button.x') as HTMLButtonElement).click();
+    const close = fixture.nativeElement.querySelector('.scrap-dialog__close') as HTMLButtonElement;
+    expect(close.getAttribute('aria-label')).toBe('Fermer');
+    close.click();
     await fixture.whenStable();
     expect(fixture.componentInstance.open()).toBe(false);
   });
 
-  it('se referme au clic sur le fond, pas sur la plaque', async () => {
+  it('se referme au clic sur le fond, pas sur le panneau', async () => {
     fixture.componentInstance.open.set(true);
     await fixture.whenStable();
 
-    (fixture.nativeElement.querySelector('.plate') as HTMLElement).click();
+    (fixture.nativeElement.querySelector('.scrap-dialog__panel') as HTMLElement).click();
     await fixture.whenStable();
     expect(fixture.componentInstance.open()).toBe(true);
 
@@ -107,7 +109,9 @@ describe('ScrapModal', () => {
   it('projette le corps et les actions', async () => {
     fixture.componentInstance.open.set(true);
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelector('.body p').textContent).toBe('Corps');
-    expect(fixture.nativeElement.querySelector('.actions button').textContent).toBe('OK');
+    const query = (selector: string) => fixture.nativeElement.querySelector(selector);
+    expect(query('.scrap-dialog__body p').textContent).toBe('Corps');
+    expect(query('.scrap-dialog__actions button').textContent).toBe('OK');
+    expect(dialog().classList.contains('scrap-dialog')).toBe(true);
   });
 });

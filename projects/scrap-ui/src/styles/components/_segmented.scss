@@ -1,0 +1,46 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Contrôle segmenté
+  // ------------------------------------------------------------
+  .scrap-segmented {
+    display: inline-flex;
+    justify-self: start;
+    align-items: stretch;
+    gap: 2px;
+    padding: 2px;
+    border-radius: var(--scrap-radius-control);
+    box-shadow: inset 0 0 0 1px var(--scrap-line-strong);
+  }
+  .scrap-segmented > button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--scrap-space-1);
+    height: calc(var(--scrap-control-m) - 4px);
+    padding: 0 var(--scrap-space-3);
+    border: 0;
+    border-radius: calc(var(--scrap-radius-control) - 2px);
+    background: transparent;
+    color: var(--scrap-ink-muted);
+    font: 400 var(--scrap-fs-ui) / 1 var(--scrap-font-body);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--scrap-dur) var(--scrap-ease),
+      color var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-segmented > button:hover {
+    color: var(--scrap-ink);
+  }
+  .scrap-segmented > button[aria-pressed='true'],
+  .scrap-segmented > button[aria-checked='true'] {
+    background: var(--scrap-strong);
+    color: var(--scrap-strong-ink);
+    font-weight: 700;
+  }
+  .scrap-segmented--s > button {
+    height: calc(var(--scrap-control-s) - 4px);
+    padding: 0 var(--scrap-space-2);
+    font-size: var(--scrap-fs-s);
+  }
+}

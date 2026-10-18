@@ -5,7 +5,7 @@
     "ng": "ng",
     "prestart": "npm run build",
     "start": "ng serve demo",
-    "build": "ng build scrap-ui",
+    "build": "ng build scrap-ui && node scripts/build-css.mjs",
     "watch": "ng build scrap-ui --watch --configuration development",
     "build:demo": "ng build demo",
     "test": "npm run test:lib && npm run test:demo && npm run test:schematics",
@@ -46,6 +46,7 @@
     "jsdom": "^28.0.0",
     "ng-packagr": "^22.1.0",
     "prettier": "^3.8.1",
+    "sass": "^1.101.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.68.0",
     "vitest": "^4.0.8"

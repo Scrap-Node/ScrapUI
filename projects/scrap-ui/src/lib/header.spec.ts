@@ -4,7 +4,8 @@ import { ScrapHeader } from './header';
 describe('ScrapHeader', () => {
   let fixture: ComponentFixture<ScrapHeader>;
 
-  const burger = () => fixture.nativeElement.querySelector('.burger') as HTMLButtonElement;
+  const burger = () =>
+    fixture.nativeElement.querySelector('.scrap-header__burger') as HTMLButtonElement;
   const nav = () => fixture.nativeElement.querySelector('nav') as HTMLElement;
 
   beforeEach(async () => {
@@ -26,24 +27,42 @@ describe('ScrapHeader', () => {
   });
 
   it('pointe la marque vers la racine par défaut', async () => {
-    expect(fixture.nativeElement.querySelector('.brand').getAttribute('href')).toBe('/');
+    const brand = () => fixture.nativeElement.querySelector('.scrap-header__brand');
+    expect(brand().getAttribute('href')).toBe('/');
+    expect(brand().textContent.trim()).toBe('Atelier');
     fixture.componentRef.setInput('homeHref', '/accueil');
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelector('.brand').getAttribute('href')).toBe('/accueil');
+    expect(brand().getAttribute('href')).toBe('/accueil');
+  });
+
+  it('signale la page courante', async () => {
+    fixture.componentRef.setInput('links', [
+      { label: 'Stock', href: '/stock', current: true },
+      { label: 'Contact', href: '/contact' },
+    ]);
+    await fixture.whenStable();
+    const links = [...nav().querySelectorAll('a')] as HTMLAnchorElement[];
+    expect(links.map((a) => a.getAttribute('aria-current'))).toEqual(['page', null]);
+  });
+
+  it("n'affiche pas de bouton de menu sans liens", async () => {
+    fixture.componentRef.setInput('links', []);
+    await fixture.whenStable();
+    expect(burger()).toBeNull();
   });
 
   it('ouvre et referme le menu', async () => {
-    expect(nav().classList.contains('open')).toBe(false);
+    expect(nav().classList.contains('is-open')).toBe(false);
     expect(burger().getAttribute('aria-expanded')).toBe('false');
 
     burger().click();
     await fixture.whenStable();
-    expect(nav().classList.contains('open')).toBe(true);
+    expect(nav().classList.contains('is-open')).toBe(true);
     expect(burger().getAttribute('aria-expanded')).toBe('true');
 
     burger().click();
     await fixture.whenStable();
-    expect(nav().classList.contains('open')).toBe(false);
+    expect(nav().classList.contains('is-open')).toBe(false);
   });
 
   it('referme le menu quand on suit un lien', async () => {
@@ -54,7 +73,7 @@ describe('ScrapHeader', () => {
     link.addEventListener('click', (e) => e.preventDefault());
     link.click();
     await fixture.whenStable();
-    expect(nav().classList.contains('open')).toBe(false);
+    expect(nav().classList.contains('is-open')).toBe(false);
   });
 
   it("relie le burger à la navigation qu'il commande", () => {

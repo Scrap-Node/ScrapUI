@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openStory, shot, type Theme } from './helpers';
+import { openStory, settle, shot, type Theme } from './helpers';
 
 const THEMES: Theme[] = ['light', 'dark'];
 
@@ -31,20 +31,22 @@ for (const theme of THEMES) {
       await openStory(page, 'modale-toasts', theme);
       await page.getByRole('button', { name: 'Ouvrir la modale' }).click();
       await expect(page.getByRole('dialog')).toBeVisible();
+      await settle(page);
       await expect(page).toHaveScreenshot(shot('modale-ouverte', theme));
     });
 
     test('pile de toasts', async ({ page }) => {
       await openStory(page, 'modale-toasts', theme);
       const stage = page.locator('story-case').nth(1);
-      for (const tone of ['success', 'warning', 'danger']) {
-        await stage.getByRole('button', { name: tone, exact: true }).click();
+      for (const label of ['Succès', 'Avertissement', 'Erreur']) {
+        await stage.getByRole('button', { name: label, exact: true }).click();
       }
       const toasts = page.locator('scrap-toasts');
-      await expect(toasts.locator('.toast')).toHaveCount(3);
+      await expect(toasts.locator('.scrap-toast')).toHaveCount(3);
       // Le survol met la pile en pause : sans lui, les toasts s'évaporeraient
       // pendant la capture et le test serait instable.
       await toasts.hover();
+      await settle(page);
       await expect(toasts).toHaveScreenshot(shot('toasts', theme));
     });
 
@@ -62,7 +64,7 @@ for (const theme of THEMES) {
     test('onglet atteint au clavier', async ({ page }) => {
       await openStory(page, 'onglets', theme);
       const tabs = page.locator('scrap-tabs').first();
-      await tabs.getByRole('tab', { name: 'Détails' }).focus();
+      await tabs.getByRole('tab', { name: 'Propriétés' }).focus();
       await page.keyboard.press('ArrowRight');
       await expect(tabs).toHaveScreenshot(shot('onglet-clavier', theme));
     });
@@ -103,6 +105,55 @@ for (const theme of THEMES) {
     test('lien de vitrine actif', async ({ page }) => {
       await openStory(page, 'badges', theme);
       await expect(page.locator('nav.stories')).toHaveScreenshot(shot('nav-active', theme));
+    });
+
+    test('menu ouvert', async ({ page }) => {
+      await openStory(page, 'outils', theme);
+      await page.getByRole('button', { name: 'Fichier' }).click();
+      const menu = page.getByRole('menu', { name: 'Fichier' });
+      await expect(menu).toBeVisible();
+      await settle(page);
+      await expect(menu).toHaveScreenshot(shot('menu-ouvert', theme));
+    });
+
+    test('liste déroulante ouverte', async ({ page }) => {
+      await openStory(page, 'formulaires', theme);
+      const select = page.locator('scrap-select').first();
+      await select.getByRole('button').click();
+      const list = select.getByRole('listbox');
+      await expect(list).toBeVisible();
+      await settle(page);
+      await expect(list).toHaveScreenshot(shot('liste-ouverte', theme));
+    });
+
+    test('info-bulle', async ({ page }) => {
+      await openStory(page, 'outils', theme);
+      const bar = page.getByRole('toolbar', { name: 'Outils' });
+      await bar.getByRole('button', { name: 'Zone' }).hover();
+      await expect(page.getByRole('tooltip')).toBeVisible();
+      await settle(page);
+      await expect(page.locator('story-case').first().locator('.stage')).toHaveScreenshot(
+        shot('info-bulle', theme),
+      );
+    });
+
+    test('palette de commandes ouverte', async ({ page }) => {
+      await openStory(page, 'boutons', theme);
+      await page.getByRole('button', { name: 'Commandes' }).click();
+      const dialog = page.getByRole('dialog', { name: 'Palette de commandes' });
+      await expect(dialog).toBeVisible();
+      await dialog.getByRole('combobox').fill('form');
+      await expect(dialog.getByRole('option')).toHaveCount(1);
+      await settle(page);
+      await expect(page).toHaveScreenshot(shot('palette-ouverte', theme));
+    });
+
+    test('zone sélectionnée dans la timeline', async ({ page }) => {
+      await openStory(page, 'audio', theme);
+      const timeline = page.locator('scrap-timeline');
+      await timeline.locator('.scrap-timeline__hit').focus();
+      await page.keyboard.press('Shift+PageUp');
+      await expect(timeline).toHaveScreenshot(shot('timeline-zone', theme));
     });
   });
 }

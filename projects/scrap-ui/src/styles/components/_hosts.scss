@@ -1,0 +1,19 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Hôtes des composants Angular sans classe propre
+  // ------------------------------------------------------------
+  scrap-theme-toggle {
+    display: inline-flex;
+  }
+  scrap-modal,
+  scrap-command-palette {
+    display: contents;
+  }
+  scrap-footer,
+  scrap-dropzone,
+  scrap-history,
+  scrap-tree,
+  scrap-breadcrumbs {
+    display: block;
+  }
+}

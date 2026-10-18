@@ -1,0 +1,213 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Champ : étiquette, contrôle, indice, erreur
+  // ------------------------------------------------------------
+  .scrap-field {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    min-width: 0;
+  }
+  .scrap-field__label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--scrap-space-2);
+    font: 400 var(--scrap-fs-s) / 1.3 var(--scrap-font-body);
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-field__label small {
+    font-size: var(--scrap-fs-s);
+    color: var(--scrap-ink-faint);
+  }
+  .scrap-field__hint {
+    font-size: var(--scrap-fs-s);
+    line-height: 1.4;
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-field__error {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--scrap-fs-s);
+    line-height: 1.4;
+    color: var(--scrap-danger-text);
+  }
+  .scrap-field__error .scrap-i {
+    width: 14px;
+    height: 14px;
+  }
+
+  .scrap-input,
+  .scrap-select,
+  .scrap-textarea {
+    width: 100%;
+    min-width: 0;
+    height: var(--scrap-field-h);
+    padding: 0 10px;
+    border: var(--scrap-border-field) solid var(--scrap-field-border);
+    border-radius: var(--scrap-radius-field);
+    background: var(--scrap-field);
+    color: var(--scrap-ink);
+    font: 400 var(--scrap-fs-ui) / 1.4 var(--scrap-font-body);
+    transition:
+      border-color var(--scrap-dur) var(--scrap-ease),
+      box-shadow var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-textarea {
+    height: auto;
+    min-height: calc(var(--scrap-field-h) * 2.6);
+    padding: 8px 10px;
+    resize: vertical;
+  }
+  .scrap-input::placeholder,
+  .scrap-textarea::placeholder {
+    color: var(--scrap-ink-faint);
+  }
+  .scrap-input:hover,
+  .scrap-select:hover,
+  .scrap-textarea:hover {
+    border-color: var(--scrap-ink-faint);
+  }
+  .scrap-input:focus,
+  .scrap-select:focus,
+  .scrap-textarea:focus {
+    outline: none;
+  }
+  .scrap-input:focus-visible,
+  .scrap-select:focus-visible,
+  .scrap-textarea:focus-visible {
+    outline: var(--scrap-focus-ring);
+    outline-offset: var(--scrap-focus-offset);
+    border-color: var(--scrap-ink-muted);
+  }
+  .scrap-input[aria-invalid='true'],
+  .scrap-textarea[aria-invalid='true'] {
+    border-color: var(--scrap-danger);
+  }
+  .scrap-input:disabled,
+  .scrap-select:disabled {
+    color: var(--scrap-ink-faint);
+    background: transparent;
+    border-color: var(--scrap-line);
+    cursor: not-allowed;
+  }
+  .scrap-select {
+    appearance: none;
+    padding-right: 30px;
+    cursor: pointer;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--scrap-ink-muted) 50%),
+      linear-gradient(135deg, var(--scrap-ink-muted) 50%, transparent 50%);
+    background-position:
+      calc(100% - 15px) 50%,
+      calc(100% - 10px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  /* Case, radio, interrupteur */
+  .scrap-choice {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--scrap-space-2);
+    min-height: var(--scrap-control-m);
+    font-size: var(--scrap-fs-ui);
+    cursor: pointer;
+  }
+  .scrap-checkbox,
+  .scrap-radio {
+    appearance: none;
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    border: 2px solid var(--scrap-ink-muted);
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background-color var(--scrap-dur) var(--scrap-ease),
+      border-color var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-radio {
+    border-radius: 50%;
+  }
+  .scrap-checkbox:checked,
+  .scrap-checkbox:indeterminate {
+    background: var(--scrap-ink);
+    border-color: var(--scrap-ink);
+  }
+  .scrap-checkbox:checked::after {
+    content: '';
+    width: 7px;
+    height: 4px;
+    border: 2px solid var(--scrap-surface);
+    border-top: 0;
+    border-right: 0;
+    transform: translateY(-1px) rotate(-45deg);
+  }
+  .scrap-checkbox:indeterminate::after {
+    content: '';
+    width: 8px;
+    height: 2px;
+    background: var(--scrap-surface);
+  }
+  .scrap-radio:checked {
+    border: 4px solid var(--scrap-ink);
+    background: var(--scrap-surface);
+  }
+  .scrap-checkbox:disabled,
+  .scrap-radio:disabled {
+    border-color: var(--scrap-line-strong);
+    background: var(--scrap-fill);
+    cursor: not-allowed;
+  }
+
+  .scrap-switch {
+    appearance: none;
+    flex: none;
+    position: relative;
+    width: 26px;
+    height: 14px;
+    margin: 0;
+    border: 2px solid var(--scrap-ink-muted);
+    border-radius: 9px;
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background-color var(--scrap-dur) var(--scrap-ease),
+      border-color var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-switch::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--scrap-ink-muted);
+    transition:
+      transform var(--scrap-dur) var(--scrap-ease),
+      background-color var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-switch:checked {
+    background: var(--scrap-accent);
+    border-color: var(--scrap-accent);
+  }
+  .scrap-switch:checked::after {
+    transform: translateX(12px);
+    background: var(--scrap-white);
+  }
+  .scrap-switch:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .scrap-field__error scrap-icon {
+    flex: none;
+  }
+}

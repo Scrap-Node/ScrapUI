@@ -1,51 +1,32 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
+/** Tonalités sémantiques communes aux badges, toasts et encadrés. */
 export type ScrapTone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
 
-/** Badge tampon avec tonalités sémantiques. */
+/** Le badge ajoute `accent` : ce qui a été détruit ou modifié. */
+export type ScrapBadgeTone = ScrapTone | 'accent';
+
+/**
+ * Un état ou une catégorie, en un mot.
+ *
+ * `dot` pour un état qui évolue (en cours, à vérifier) : pastille colorée sur
+ * un fond teinté plutôt qu'un aplat.
+ */
 @Component({
   selector: 'scrap-badge',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-content />`,
   host: {
     class: 'scrap-badge',
-    '[class.info]': 'tone() === "info"',
-    '[class.success]': 'tone() === "success"',
-    '[class.warning]': 'tone() === "warning"',
-    '[class.danger]': 'tone() === "danger"',
+    '[class.scrap-badge--accent]': 'tone() === "accent"',
+    '[class.scrap-badge--info]': 'tone() === "info"',
+    '[class.scrap-badge--success]': 'tone() === "success"',
+    '[class.scrap-badge--warning]': 'tone() === "warning"',
+    '[class.scrap-badge--danger]': 'tone() === "danger"',
+    '[class.scrap-badge--dot]': 'dot()',
   },
-  styles: `
-    :host {
-      display: inline-block;
-      font-family: var(--scrap-font-display);
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 0.75rem;
-      padding: 0.25em 0.7em;
-      border: var(--scrap-border-w) solid currentColor;
-      transform: rotate(-2deg);
-      color: var(--scrap-ink-strong);
-    }
-    :host(.info) {
-      color: var(--scrap-info);
-    }
-    :host(.success) {
-      color: var(--scrap-success);
-    }
-    :host(.warning) {
-      color: var(--scrap-warning);
-    }
-    :host(.danger) {
-      color: var(--scrap-danger);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      :host {
-        transform: none;
-      }
-    }
-  `,
 })
 export class ScrapBadge {
-  readonly tone = input<ScrapTone>('neutral');
+  readonly tone = input<ScrapBadgeTone>('neutral');
+  readonly dot = input(false, { transform: booleanAttribute });
 }

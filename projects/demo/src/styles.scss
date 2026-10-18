@@ -1,2 +1,9 @@
-// Thème Scrap UI (dans un projet externe : @use '@comechaslerie/scrap-ui/styles/index')
+// Feuilles Scrap UI. Dans un projet externe :
+//   @use '@comechaslerie/scrap-ui/styles';
+//   @use '@comechaslerie/scrap-ui/styles/affiche'; // facultatif
 @use '../../scrap-ui/src/styles/index';
+@use '../../scrap-ui/src/styles/affiche';
+
+body {
+  margin: 0;
+}

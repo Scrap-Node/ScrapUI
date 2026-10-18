@@ -1,0 +1,78 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // État vide
+  // ------------------------------------------------------------
+  .scrap-empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--scrap-space-2);
+    padding: var(--scrap-space-6) var(--scrap-space-4);
+    text-align: center;
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-empty > .scrap-i {
+    width: 40px;
+    height: 40px;
+    color: var(--scrap-ink-faint);
+    stroke-width: 1.2;
+  }
+  .scrap-empty > scrap-icon {
+    color: var(--scrap-ink-faint);
+  }
+  .scrap-empty__title {
+    margin: var(--scrap-space-2) 0 0;
+    font: var(--scrap-weight-title) var(--scrap-fs-h3) / 1.3 var(--scrap-font-display);
+    color: var(--scrap-ink-strong);
+  }
+  .scrap-empty__text {
+    max-width: 42ch;
+    margin: 0 0 var(--scrap-space-2);
+    font-size: var(--scrap-fs-ui);
+  }
+
+  // ------------------------------------------------------------
+  // Page d'erreur
+  // ------------------------------------------------------------
+  .scrap-error {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: var(--scrap-space-3);
+    min-height: 320px;
+    padding: var(--scrap-space-6) var(--scrap-space-4);
+    overflow: hidden;
+    border-radius: var(--scrap-radius-xl);
+    background: var(--scrap-sunken);
+    text-align: center;
+  }
+  .scrap-error::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--scrap-grain-url);
+    opacity: var(--scrap-grain-opacity);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .scrap-error__code {
+    margin: 0;
+    color: transparent;
+    font: var(--scrap-weight-title) clamp(64px, 12vw, 112px) / 1 var(--scrap-font-display);
+    letter-spacing: -0.03em;
+    -webkit-text-stroke: 2px var(--scrap-ink);
+  }
+  .scrap-error__msg {
+    max-width: 44ch;
+    margin: 0;
+    font-size: var(--scrap-fs-l);
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-error__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--scrap-space-2);
+    margin-top: var(--scrap-space-2);
+  }
+}

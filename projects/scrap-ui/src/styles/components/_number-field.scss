@@ -1,0 +1,85 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Champ numérique : glisser l'étiquette, flèches, unité
+  // ------------------------------------------------------------
+  .scrap-number {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    min-width: 0;
+  }
+  .scrap-number__label {
+    justify-self: start;
+    font-size: var(--scrap-fs-s);
+    color: var(--scrap-ink-muted);
+    cursor: ew-resize;
+    user-select: none;
+    touch-action: none;
+  }
+  .scrap-number__box {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 22px;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: 'value unit inc' 'value unit dec';
+    align-items: center;
+    height: var(--scrap-field-h);
+    border: var(--scrap-border-field) solid var(--scrap-field-border);
+    border-radius: var(--scrap-radius-field);
+    background: var(--scrap-field);
+    overflow: hidden;
+  }
+  .scrap-number__box:focus-within {
+    outline: var(--scrap-focus-ring);
+    outline-offset: var(--scrap-focus-offset);
+    border-color: var(--scrap-ink-muted);
+  }
+  .scrap-number__box input {
+    grid-area: value;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0 4px 0 10px;
+    border: 0;
+    background: transparent;
+    outline: none;
+    text-align: right;
+    font: 400 var(--scrap-fs-ui) / 1 var(--scrap-font-body);
+    font-variant-numeric: tabular-nums;
+  }
+  .scrap-number__unit {
+    grid-area: unit;
+    padding-right: 6px;
+    font-size: var(--scrap-fs-s);
+    color: var(--scrap-ink-faint);
+  }
+  .scrap-number__step {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--scrap-line);
+    background: transparent;
+    color: var(--scrap-ink-muted);
+    cursor: pointer;
+  }
+  .scrap-number__step:hover {
+    background: var(--scrap-hover);
+    color: var(--scrap-ink);
+  }
+  .scrap-number__step[data-step='-1'] {
+    grid-area: dec;
+  }
+  .scrap-number__step[data-step='1'] {
+    grid-area: inc;
+    border-bottom: 1px solid var(--scrap-line);
+  }
+  .scrap-number__step .scrap-i {
+    width: 10px;
+    height: 10px;
+  }
+  .scrap-number.is-scrubbing .scrap-number__label {
+    color: var(--scrap-accent-text);
+  }
+}

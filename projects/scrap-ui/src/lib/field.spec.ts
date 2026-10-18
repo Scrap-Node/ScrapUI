@@ -5,7 +5,7 @@ import { ScrapField, ScrapInput } from './field';
 @Component({
   imports: [ScrapField, ScrapInput],
   template: `
-    <scrap-field label="Email" [hint]="hint()" [error]="error()">
+    <scrap-field label="Email" [hint]="hint()" [error]="error()" [optional]="optional()">
       <input scrapInput type="email" />
     </scrap-field>
   `,
@@ -13,6 +13,7 @@ import { ScrapField, ScrapInput } from './field';
 class Host {
   readonly hint = signal<string | undefined>(undefined);
   readonly error = signal<string | undefined>(undefined);
+  readonly optional = signal<string | undefined>(undefined);
 }
 
 describe('ScrapField', () => {
@@ -45,7 +46,7 @@ describe('ScrapField', () => {
   it("décrit le contrôle par l'indice", async () => {
     fixture.componentInstance.hint.set('Adresse professionnelle');
     await fixture.whenStable();
-    const hint = fixture.nativeElement.querySelector('small');
+    const hint = fixture.nativeElement.querySelector('small.scrap-field__hint');
     expect(input().getAttribute('aria-describedby')).toBe(hint.id);
     expect(hint.textContent.trim()).toBe('Adresse professionnelle');
   });
@@ -53,8 +54,10 @@ describe('ScrapField', () => {
   it("signale l'erreur et marque le contrôle invalide", async () => {
     fixture.componentInstance.error.set('Format invalide');
     await fixture.whenStable();
-    const error = fixture.nativeElement.querySelector('small.error');
+    const error = fixture.nativeElement.querySelector('small.scrap-field__error');
     expect(error.getAttribute('role')).toBe('alert');
+    expect(error.textContent.trim()).toBe('Format invalide');
+    expect(error.querySelector('scrap-icon')).not.toBeNull();
     expect(input().getAttribute('aria-invalid')).toBe('true');
     expect(input().getAttribute('aria-describedby')).toBe(error.id);
   });
@@ -65,8 +68,57 @@ describe('ScrapField', () => {
     await fixture.whenStable();
     const ids = input().getAttribute('aria-describedby')!.split(' ');
     expect(ids).toHaveLength(2);
-    const rendered = [...fixture.nativeElement.querySelectorAll('small')].map((e: Element) => e.id);
+    const rendered = [
+      ...fixture.nativeElement.querySelectorAll('.scrap-field__hint, .scrap-field__error'),
+    ].map((e: Element) => e.id);
     expect(ids).toEqual(rendered);
+  });
+
+  it("ajoute une mention discrète dans l'étiquette", async () => {
+    expect(label().querySelector('small')).toBeNull();
+    fixture.componentInstance.optional.set('facultatif');
+    await fixture.whenStable();
+    expect(label().querySelector('small')?.textContent?.trim()).toBe('facultatif');
+    // La mention ne compte ni comme indice ni comme erreur.
+    expect(input().getAttribute('aria-describedby')).toBeNull();
+  });
+});
+
+@Component({
+  imports: [ScrapField, ScrapInput],
+  template: `
+    <scrap-field label="Format">
+      <select scrapInput>
+        <option>WAV</option>
+      </select>
+    </scrap-field>
+    <scrap-field label="Notes">
+      <textarea scrapInput></textarea>
+    </scrap-field>
+  `,
+})
+class OtherControls {}
+
+describe('ScrapInput sur un select ou un textarea', () => {
+  it("prend la classe qui correspond à l'élément", async () => {
+    const fixture = TestBed.createComponent(OtherControls);
+    await fixture.whenStable();
+    const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+    const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+    expect(select.classList.contains('scrap-select')).toBe(true);
+    expect(select.classList.contains('scrap-input')).toBe(false);
+    expect(textarea.classList.contains('scrap-textarea')).toBe(true);
+    expect(textarea.classList.contains('scrap-input')).toBe(false);
+  });
+
+  it('reste relié à son étiquette', async () => {
+    const fixture = TestBed.createComponent(OtherControls);
+    await fixture.whenStable();
+    const labels = [...fixture.nativeElement.querySelectorAll('label')] as HTMLLabelElement[];
+    const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+    const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+    expect(labels[0].htmlFor).toBe(select.id);
+    expect(labels[1].htmlFor).toBe(textarea.id);
   });
 });
 

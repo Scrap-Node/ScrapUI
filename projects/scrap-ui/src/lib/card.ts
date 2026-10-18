@@ -1,58 +1,35 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Carte Scrap : plaque bordée avec ombre dure et grain,
- * en-tête optionnel façon étiquette rivetée.
+ * Carte : un objet qu'on ouvre ou qu'on choisit — un fichier, une session,
+ * une pièce.
+ *
+ * ```html
+ * <scrap-card title="moteur.wav">
+ *   <button scrap-button variant="ghost" icon actions aria-label="Options">…</button>
+ *   <img media src="apercu.png" alt="" />
+ *   48 kHz, 16 bits, 6,4 s
+ *   <div footer><button scrap-button size="s">Ouvrir</button></div>
+ * </scrap-card>
+ * ```
+ *
+ * Les emplacements laissés vides ne prennent pas de place.
  */
 @Component({
   selector: 'scrap-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (title()) {
-      <div class="card-head">
-        <span class="rivet"></span>
-        <h3>{{ title() }}</h3>
-        <span class="rivet"></span>
-      </div>
-    }
-    <div class="card-body scrap-grain">
-      <ng-content />
+    <div class="scrap-card__media"><ng-content select="[media]" /></div>
+    <div class="scrap-card__head">
+      @if (title()) {
+        <h3 class="scrap-card__title">{{ title() }}</h3>
+      }
+      <ng-content select="[actions]" />
     </div>
+    <div class="scrap-card__body"><ng-content /></div>
+    <div class="scrap-card__foot"><ng-content select="[footer]" /></div>
   `,
-  styles: `
-    :host {
-      display: block;
-      background: var(--scrap-surface);
-      border: var(--scrap-border-w) solid var(--scrap-border);
-      border-radius: var(--scrap-radius);
-      box-shadow: var(--scrap-shadow);
-    }
-    .card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--scrap-space-3);
-      padding: var(--scrap-space-2) var(--scrap-space-3);
-      background: var(--scrap-ink-strong);
-      border-bottom: var(--scrap-border-w) solid var(--scrap-border);
-    }
-    .card-head h3 {
-      margin: 0;
-      color: var(--scrap-bg);
-      font-size: var(--scrap-fs-small);
-      letter-spacing: 0.1em;
-    }
-    .rivet {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--scrap-copper);
-      flex: none;
-    }
-    .card-body {
-      padding: var(--scrap-space-4);
-    }
-  `,
+  host: { class: 'scrap-card' },
 })
 export class ScrapCard {
   readonly title = input<string>();

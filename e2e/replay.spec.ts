@@ -10,8 +10,8 @@ import { openStory } from './helpers';
  * nécessaire et suffisante pour qu'elle reparte.
  */
 test.describe('rejouer les animations', () => {
-  test('le bouton recrée le bloc animé des utilitaires', async ({ page }) => {
-    await openStory(page, 'utilitaires');
+  test("le bouton recrée le bloc animé de l'affiche", async ({ page }) => {
+    await openStory(page, 'affiche');
     const plate = page.locator('story-replay .scrap-stamp-in');
     await expect(plate).toHaveCount(1);
 
@@ -24,19 +24,8 @@ test.describe('rejouer les animations', () => {
     await expect(plate).not.toHaveAttribute('data-avant', '1');
   });
 
-  test("le bouton rejoue l'entrée de la page d'erreur", async ({ page }) => {
-    await openStory(page, 'etats');
-    const code = page.locator('story-replay .code');
-    await expect(code).toHaveText('404');
-
-    await code.evaluate((el) => el.setAttribute('data-avant', '1'));
-    await page.getByRole('button', { name: "Rejouer l'entrée" }).click();
-    await expect(code).toHaveText('404');
-    await expect(code).not.toHaveAttribute('data-avant', '1');
-  });
-
   test("l'animation est bien réarmée, pas seulement le DOM", async ({ page }) => {
-    await openStory(page, 'utilitaires');
+    await openStory(page, 'affiche');
 
     // On compte les `animationstart`, qui remontent jusqu'au document. Guetter
     // un playState « running » après le clic serait une course : l'animation
@@ -56,5 +45,10 @@ test.describe('rejouer les animations', () => {
     await expect
       .poll(() => page.evaluate(() => (window as unknown as { __starts: number }).__starts))
       .toBeGreaterThan(0);
+  });
+
+  test("l'ancienne adresse des utilitaires mène à l'affiche", async ({ page }) => {
+    await openStory(page, 'utilitaires');
+    await expect(page).toHaveURL(/\/affiche$/);
   });
 });

@@ -1,0 +1,51 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Panneau latéral (non modal)
+  // ------------------------------------------------------------
+  .scrap-sheet {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    width: var(--sheet-w, 360px);
+    max-width: 100%;
+    border-left: 1px solid var(--scrap-line);
+    background: var(--scrap-surface);
+    color: var(--scrap-ink);
+  }
+  .scrap-sheet[hidden] {
+    display: none;
+  }
+  .scrap-sheet__bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 4px;
+    height: 44px;
+    padding: 0 8px 0 16px;
+  }
+  .scrap-sheet__title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    color: var(--scrap-ink-strong);
+    font: var(--scrap-weight-strong) var(--scrap-fs-l) / 1.2 var(--scrap-font-display);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .scrap-sheet__body {
+    flex: 1;
+    overflow: auto;
+    padding: 0 16px 16px;
+    font-size: var(--scrap-fs-ui);
+  }
+  .scrap-sheet.is-entering {
+    animation: scrap-sheet-in 220ms var(--scrap-ease) both;
+  }
+  @keyframes scrap-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+  }
+}

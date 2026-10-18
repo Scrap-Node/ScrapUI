@@ -1,0 +1,51 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Encadré
+  // ------------------------------------------------------------
+  .scrap-callout {
+    --tone: var(--scrap-steel);
+    --tone-text: var(--scrap-info-text);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px var(--scrap-space-3);
+    padding: var(--scrap-space-3) var(--scrap-space-4);
+    border: 2px solid var(--tone);
+    border-radius: var(--scrap-radius-m);
+    background: var(--scrap-surface);
+    color: var(--scrap-ink);
+    font-size: var(--scrap-fs-ui);
+  }
+  .scrap-callout > :is(.scrap-i, scrap-icon) {
+    grid-row: 1 / span 2;
+    margin-top: 1px;
+    color: var(--tone-text);
+  }
+  .scrap-callout__title {
+    margin: 0;
+    font-weight: var(--scrap-weight-strong);
+    color: var(--scrap-ink-strong);
+  }
+  .scrap-callout__text {
+    margin: 0;
+    color: var(--scrap-ink-muted);
+  }
+  .scrap-callout__title + .scrap-callout__text {
+    grid-column: 2;
+  }
+  .scrap-callout--warning {
+    --tone: var(--scrap-ochre);
+    --tone-text: var(--scrap-warning-text);
+  }
+  .scrap-callout--danger {
+    --tone: var(--scrap-rust);
+    --tone-text: var(--scrap-danger-text);
+  }
+  .scrap-callout--success {
+    --tone: var(--scrap-moss);
+    --tone-text: var(--scrap-success-text);
+  }
+  .scrap-callout--accent {
+    --tone: var(--scrap-copper);
+    --tone-text: var(--scrap-accent-text);
+  }
+}

@@ -8,11 +8,13 @@
 #
 # À déclencher à la main depuis l'onglet Actions, ou en ligne de commande :
 #
-#   gh workflow run visual-baselines.yml            # une fois fusionné sur main
-#   git push -f origin HEAD:baselines/ma-branche   # avant la première fusion
+#   gh workflow run visual-baselines.yml --ref ma-branche   # une fois fusionné sur main
+#   git push -f origin HEAD:baselines/ma-branche            # avant la première fusion
 #   gh run watch
-#   gh run download -n visual-baselines-linux -D e2e/__screenshots__
+#   gh run download -n visual-baselines-linux -D e2e/__screenshots__/linux
 #   git add e2e/__screenshots__/linux && git commit -m "références visuelles Linux"
+#
+# L'artefact contient les images à plat : on le dépose directement dans linux/.
 #
 # Pourquoi ici plutôt qu'en local : les références doivent être rendues par le
 # même conteneur que le job `visual` de la CI. Le faire depuis un poste macOS

@@ -1,0 +1,36 @@
+// ============================================================
+// SCRAP UI — Composants
+// Une feuille sans framework : les composants Angular posent ces
+// classes et ajoutent le comportement. Une page HTML ou une
+// application Blazor peut charger la feuille compilée seule
+// (css/scrap-ui.css dans le paquet).
+// ============================================================
+@use 'components/icon';
+@use 'components/button';
+@use 'components/toolbar';
+@use 'components/segmented';
+@use 'components/badge';
+@use 'components/card';
+@use 'components/field';
+@use 'components/number-field';
+@use 'components/slider';
+@use 'components/tabs';
+@use 'components/menu';
+@use 'components/dialog';
+@use 'components/toast';
+@use 'components/progress';
+@use 'components/callout';
+@use 'components/disclosure';
+@use 'components/props';
+@use 'components/table';
+@use 'components/history';
+@use 'components/tree';
+@use 'components/breadcrumbs';
+@use 'components/dropzone';
+@use 'components/empty';
+@use 'components/header';
+@use 'components/sheet';
+@use 'components/palette';
+@use 'components/audio';
+@use 'components/shell';
+@use 'components/hosts';

@@ -1,0 +1,75 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Arbre
+  // ------------------------------------------------------------
+  .scrap-tree {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--scrap-fs-ui);
+  }
+  .scrap-tree ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .scrap-tree [role='group'][hidden] {
+    display: none;
+  }
+  .scrap-tree__row {
+    --d: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 8px 0 calc(8px + var(--d) * 16px);
+    border-radius: var(--scrap-radius-s);
+    color: var(--scrap-ink-muted);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  .scrap-tree__row:hover {
+    background: var(--scrap-hover);
+  }
+  .scrap-tree [role='treeitem']:focus {
+    outline: none;
+  }
+  .scrap-tree [role='treeitem']:focus-visible > .scrap-tree__row {
+    outline: var(--scrap-focus-ring);
+    outline-offset: -2px;
+  }
+  .scrap-tree [role='treeitem'][aria-selected='true'] > .scrap-tree__row {
+    background: var(--scrap-selected);
+    color: var(--scrap-ink);
+  }
+  .scrap-tree__caret {
+    width: 14px;
+    height: 14px;
+    color: var(--scrap-ink-faint);
+    transition: transform var(--scrap-dur) var(--scrap-ease);
+  }
+  .scrap-tree [aria-expanded='true'] > .scrap-tree__row > .scrap-tree__caret {
+    transform: rotate(90deg);
+  }
+  .scrap-tree__spacer {
+    width: 14px;
+    flex: none;
+  }
+  .scrap-tree__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .scrap-tree__mark {
+    margin-left: auto;
+    font-size: var(--scrap-fs-xs);
+    color: var(--scrap-ink-faint);
+  }
+  .scrap-tree__mark--m {
+    color: var(--scrap-warning-text);
+  }
+  .scrap-tree__mark--a {
+    color: var(--scrap-success-text);
+  }
+}

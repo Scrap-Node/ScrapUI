@@ -13,15 +13,24 @@ describe('ScrapCard', () => {
     await fixture.whenStable();
   });
 
-  it("n'affiche pas d'en-tête sans titre", () => {
-    expect(fixture.nativeElement.querySelector('.card-head')).toBeNull();
+  const part = (name: string) =>
+    fixture.nativeElement.querySelector(`.scrap-card__${name}`) as HTMLElement;
+
+  it("laisse vides — donc masqués — les emplacements qu'on ne remplit pas", () => {
+    expect(fixture.nativeElement.classList.contains('scrap-card')).toBe(true);
+    expect(part('title')).toBeNull();
+    // La feuille masque les emplacements `:empty`.
+    for (const name of ['media', 'head', 'body', 'foot']) {
+      expect(part(name).matches(':empty'), name).toBe(true);
+    }
   });
 
-  it("affiche l'en-tête riveté dès qu'un titre est fourni", async () => {
+  it("affiche l'en-tête dès qu'un titre est fourni", async () => {
     fixture.componentRef.setInput('title', 'CH-042');
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelector('.card-head h3').textContent.trim()).toBe('CH-042');
-    expect(fixture.nativeElement.querySelectorAll('.rivet')).toHaveLength(2);
+    expect(part('head').matches(':empty')).toBe(false);
+    const title = part('head').querySelector('h3.scrap-card__title') as HTMLElement;
+    expect(title.textContent?.trim()).toBe('CH-042');
   });
 });
 
@@ -33,15 +42,28 @@ describe('ScrapSpinner', () => {
     await fixture.whenStable();
   });
 
-  it('rend un engrenage sans libellé par défaut', () => {
-    expect(fixture.nativeElement.querySelector('scrap-icon')).not.toBeNull();
-    expect(fixture.nativeElement.querySelector('span')).toBeNull();
+  const host = () => fixture.nativeElement as HTMLElement;
+
+  it("s'annonce comme un état, avec un texte réservé aux lecteurs d'écran", () => {
+    expect(host().getAttribute('role')).toBe('status');
+    const hidden = host().querySelector('span.scrap-sr-only') as HTMLElement;
+    expect(hidden.textContent?.trim()).toBe('Chargement');
   });
 
   it('affiche le libellé quand il est fourni', async () => {
-    fixture.componentRef.setInput('label', 'Chargement…');
+    fixture.componentRef.setInput('label', 'Analyse du fichier…');
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelector('span').textContent.trim()).toBe('Chargement…');
+    expect(host().querySelector('.scrap-sr-only')).toBeNull();
+    expect(host().querySelector('span')?.textContent?.trim()).toBe('Analyse du fichier…');
+  });
+
+  it("règle le diamètre et l'épaisseur de l'anneau", async () => {
+    expect(host().style.getPropertyValue('--spinner-size')).toBe('20px');
+    expect(host().style.getPropertyValue('--spinner-w')).toBe('3px');
+    fixture.componentRef.setInput('size', 14);
+    await fixture.whenStable();
+    expect(host().style.getPropertyValue('--spinner-size')).toBe('14px');
+    expect(host().style.getPropertyValue('--spinner-w')).toBe('2px');
   });
 });
 
@@ -54,16 +76,19 @@ describe('ScrapEmptyState', () => {
   });
 
   it('propose un titre par défaut', () => {
-    expect(fixture.nativeElement.querySelector('.title').textContent.trim()).toBe(
+    expect(fixture.nativeElement.classList.contains('scrap-empty')).toBe(true);
+    expect(fixture.nativeElement.querySelector('.scrap-empty__title').textContent.trim()).toBe(
       'Rien dans la casse',
     );
   });
 
   it("affiche le message secondaire seulement s'il existe", async () => {
-    expect(fixture.nativeElement.querySelector('.msg')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.scrap-empty__text')).toBeNull();
     fixture.componentRef.setInput('message', 'Aucun résultat');
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelector('.msg').textContent.trim()).toBe('Aucun résultat');
+    expect(fixture.nativeElement.querySelector('.scrap-empty__text').textContent.trim()).toBe(
+      'Aucun résultat',
+    );
   });
 
   it('accepte une autre icône du set', async () => {
@@ -81,19 +106,23 @@ describe('ScrapErrorPage', () => {
     await fixture.whenStable();
   });
 
+  const text = (name: string) =>
+    (
+      fixture.nativeElement.querySelector(`.scrap-error__${name}`) as HTMLElement
+    ).textContent?.trim();
+
   it('affiche 404 et son message par défaut', () => {
-    expect(fixture.nativeElement.querySelector('.code').textContent.trim()).toBe('404');
-    expect(fixture.nativeElement.querySelector('.msg').textContent.trim()).toContain('casse');
+    expect(fixture.nativeElement.classList.contains('scrap-error')).toBe(true);
+    expect(text('code')).toBe('404');
+    expect(text('msg')).toContain('casse');
   });
 
   it('accepte un autre code et un autre message', async () => {
     fixture.componentRef.setInput('code', '500');
     fixture.componentRef.setInput('message', 'La presse a lâché.');
     await fixture.whenStable();
-    expect(fixture.nativeElement.querySelector('.code').textContent.trim()).toBe('500');
-    expect(fixture.nativeElement.querySelector('.msg').textContent.trim()).toBe(
-      'La presse a lâché.',
-    );
+    expect(text('code')).toBe('500');
+    expect(text('msg')).toBe('La presse a lâché.');
   });
 });
 
@@ -102,7 +131,7 @@ describe('ScrapFooter', () => {
     const fixture = TestBed.createComponent(ScrapFooter);
     fixture.componentRef.setInput('appName', 'Atelier');
     await fixture.whenStable();
-    const legal = fixture.nativeElement.querySelector('.legal').textContent as string;
+    const legal = fixture.nativeElement.querySelector('.scrap-footer__legal').textContent as string;
     expect(legal).toContain(String(new Date().getFullYear()));
     expect(legal).toContain('Atelier');
   });

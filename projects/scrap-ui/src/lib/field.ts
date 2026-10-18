@@ -7,10 +7,11 @@ import {
   inject,
   input,
 } from '@angular/core';
+import { ScrapIcon } from './icon';
 import { ScrapIdGenerator } from './id';
 
 /**
- * Champ de formulaire : étiquette tampon + contrôle projeté.
+ * Champ de formulaire : étiquette, contrôle projeté, indice et erreur.
  *
  * Le contrôle projeté porte la directive `scrapInput`, qui se charge de lier
  * l'étiquette, l'indice et le message d'erreur au contrôle :
@@ -24,65 +25,33 @@ import { ScrapIdGenerator } from './id';
 @Component({
   selector: 'scrap-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ScrapIcon],
   template: `
-    <label [attr.for]="controlId">{{ label() }}</label>
+    <label class="scrap-field__label" [attr.for]="controlId">
+      {{ label() }}
+      @if (optional()) {
+        <small>{{ optional() }}</small>
+      }
+    </label>
     <ng-content />
     @if (hint()) {
-      <small [id]="hintId">{{ hint() }}</small>
+      <small class="scrap-field__hint" [id]="hintId">{{ hint() }}</small>
     }
     @if (error()) {
-      <small class="error" [id]="errorId" role="alert">{{ error() }}</small>
+      <small class="scrap-field__error" [id]="errorId" role="alert">
+        <scrap-icon name="warning" [size]="14" />{{ error() }}
+      </small>
     }
   `,
-  styles: `
-    :host {
-      display: flex;
-      flex-direction: column;
-      gap: var(--scrap-space-1);
-    }
-    label {
-      font-family: var(--scrap-font-display);
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: var(--scrap-fs-small);
-      color: var(--scrap-ink-strong);
-    }
-    small {
-      color: var(--scrap-ink-muted);
-      font-size: 0.8rem;
-    }
-    small.error {
-      color: var(--scrap-danger);
-      font-weight: 700;
-    }
-    ::ng-deep .scrap-input {
-      font-family: var(--scrap-font-body);
-      font-size: var(--scrap-fs-body);
-      color: var(--scrap-ink);
-      background: var(--scrap-bg-alt);
-      border: var(--scrap-border-w) solid var(--scrap-border);
-      border-radius: var(--scrap-radius);
-      padding: 0.65em 0.9em;
-      transition: box-shadow var(--scrap-transition);
-    }
-    ::ng-deep .scrap-input:focus {
-      outline: none;
-      box-shadow: var(--scrap-shadow);
-    }
-    ::ng-deep .scrap-input::placeholder {
-      color: var(--scrap-ink-muted);
-    }
-    ::ng-deep .scrap-input[aria-invalid='true'] {
-      border-color: var(--scrap-danger);
-    }
-  `,
+  host: { class: 'scrap-field' },
 })
 export class ScrapField {
   readonly label = input.required<string>();
   readonly hint = input<string>();
   /** Message d'erreur. Présent = le contrôle est marqué `aria-invalid`. */
   readonly error = input<string>();
+  /** Mention discrète à droite de l'étiquette, « facultatif » par exemple. */
+  readonly optional = input<string>();
 
   private readonly ids = inject(ScrapIdGenerator);
   readonly controlId = this.ids.next('scrap-field');
@@ -99,14 +68,17 @@ export class ScrapField {
 
 /**
  * À poser sur le contrôle projeté dans un `<scrap-field>` : applique le style
- * de la charte et branche les liaisons ARIA vers l'étiquette et les messages.
+ * de la lib et branche les liaisons ARIA vers l'étiquette et les messages.
  *
+ * Sur un `<select>` ou un `<textarea>`, la classe suit l'élément.
  * Utilisable hors d'un `scrap-field` — dans ce cas elle ne fait que styler.
  */
 @Directive({
   selector: '[scrapInput]',
   host: {
-    class: 'scrap-input',
+    '[class.scrap-input]': 'kind === "input"',
+    '[class.scrap-select]': 'kind === "select"',
+    '[class.scrap-textarea]': 'kind === "textarea"',
     '[attr.id]': 'controlId',
     '[attr.aria-describedby]': 'field?.describedBy() ?? null',
     '[attr.aria-invalid]': 'field?.error() ? "true" : null',
@@ -114,11 +86,18 @@ export class ScrapField {
 })
 export class ScrapInput {
   protected readonly field = inject(ScrapField, { optional: true });
+  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+
+  protected readonly kind =
+    this.element.tagName === 'SELECT'
+      ? 'select'
+      : this.element.tagName === 'TEXTAREA'
+        ? 'textarea'
+        : 'input';
 
   /**
    * Hors d'un `scrap-field`, on rend l'id que le consommateur a posé
    * lui-même : un binding qui retournerait `null` effacerait son attribut.
    */
-  private readonly ownId = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement.id;
-  protected readonly controlId = this.field?.controlId ?? this.ownId ?? null;
+  protected readonly controlId = this.field?.controlId ?? (this.element.id || null);
 }
