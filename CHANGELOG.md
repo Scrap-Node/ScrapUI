@@ -11,6 +11,8 @@ si l'API TypeScript ne bouge pas.
 
 ## [Non publié]
 
+## [0.3.0] — 2026-10-18
+
 ### Ajouté
 
 - Composants pour les outils de création :
