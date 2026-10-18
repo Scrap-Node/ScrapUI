@@ -43,7 +43,8 @@ jobs:
       - run: npm run test:lib
       - run: npm run test:schematics
 
-      - run: npx ng build scrap-ui
+      # La lib et sa feuille CSS compilée (css/scrap-ui.css), pour les projets sans Angular
+      - run: npm run build
 
       - name: Publier
         working-directory: dist/scrap-ui

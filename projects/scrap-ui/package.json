@@ -1,7 +1,7 @@
 {
   "name": "@comechaslerie/scrap-ui",
   "version": "0.2.0",
-  "description": "Direction artistique commune — tokens, composants et layouts Angular (charte Scrap Node)",
+  "description": "Bibliothèque d'interface des projets Scrap Node : jetons, composants Angular et feuille CSS sans framework",
   "author": "comeChaslerie",
   "license": "Apache-2.0",
   "repository": {
@@ -26,6 +26,9 @@
     "./styles/*": {
       "sass": "./styles/*",
       "default": "./styles/*"
+    },
+    "./css/*": {
+      "default": "./css/*"
     },
     "./assets/*": {
       "default": "./assets/*"
