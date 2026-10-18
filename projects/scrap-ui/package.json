@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Direction artistique commune — tokens, composants et layouts Angular (charte Scrap Node)",
   "author": "comeChaslerie",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/comeChaslerie/ScrapUI.git"

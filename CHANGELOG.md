@@ -17,6 +17,12 @@ si l'API TypeScript ne bouge pas.
   la page pour revoir `.scrap-stamp-in` ou l'arrivée du code d'une page
   d'erreur.
 
+### Modifié
+
+- Licence : le code passe de MIT à Apache 2.0, avec un fichier `NOTICE`. Le nom
+  « Scrap » et les logos restent réservés. Les versions jusqu'à 0.2.0 incluse
+  restent sous MIT.
+
 ## [0.2.0] — 2026-08-27
 
 ### Ajouté

@@ -27,6 +27,11 @@
     },
     {
       "input": ".",
+      "glob": "NOTICE",
+      "output": "."
+    },
+    {
+      "input": ".",
       "glob": "CHANGELOG.md",
       "output": "."
     }

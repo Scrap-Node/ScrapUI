@@ -261,9 +261,11 @@ Pour un essai en local (`npm publish` depuis `dist/scrap-ui`), il faut un PAT av
 
 ## Licence
 
-Le **code** est sous licence [MIT](LICENSE) : réutilisez, modifiez, redistribuez,
-en conservant la mention de paternité.
+Le **code** est sous licence [Apache 2.0](LICENSE) : réutilisez, modifiez,
+redistribuez, y compris à des fins commerciales, en conservant les mentions du
+fichier [`NOTICE`](NOTICE). Les versions jusqu'à 0.2.0 incluse ont été publiées
+sous MIT et le restent.
 
-La licence MIT porte sur le logiciel. Elle ne cède **ni le nom « Scrap »**, ni les
+La licence porte sur le code. Elle ne cède **ni le nom « Scrap »**, ni les
 logos, ni les autres signes distinctifs des projets qui s'appuient sur cette
 charte. Un dérivé de la lib est bienvenu ; qu'il se présente sous son propre nom.
