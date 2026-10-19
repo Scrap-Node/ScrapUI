@@ -245,6 +245,11 @@ export class TokensStory {
     { name: 'Altéré', token: '--scrap-data-altered' },
     { name: 'Tête de lecture', token: '--scrap-data-playhead' },
     { name: 'Boucle', token: '--scrap-data-loop' },
+    { name: 'Diff léger', token: '--scrap-data-diff-lo' },
+    { name: 'Diff massif', token: '--scrap-data-diff-hi' },
+    { name: 'Spectre, plancher', token: '--scrap-data-spectro-0' },
+    { name: 'Spectre, milieu', token: '--scrap-data-spectro-1' },
+    { name: 'Spectre, crête', token: '--scrap-data-spectro-2' },
   ];
 
   readonly spaces = [1, 2, 3, 4, 5, 6];
