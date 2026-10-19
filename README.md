@@ -190,6 +190,18 @@ theme.toggle();
 `data-scrap-theme="dark"` (ou `light`) force aussi le thème d'une seule zone de
 la page.
 
+Pour dessiner dans un canvas, `color()` rend la couleur calculée d'un jeton : les
+jetons s'écrivent en `light-dark()` et en `var()`, qu'un canvas ne sait pas lire.
+
+```ts
+effect(() => {
+  theme.theme(); // redessine à chaque changement de thème
+  ctx.fillStyle = theme.color('--scrap-data-altered'); // 'rgb(149, 97, 64)'
+  ctx.strokeStyle = theme.rgba('--scrap-data-playhead', 0.6);
+  const [r, g, b] = theme.rgb('--scrap-data-spectro-1'); // pour une rampe
+});
+```
+
 ### Module Affiche
 
 Avec `@use '@scrapnode/scrap-ui/styles/affiche'` (ou `css/scrap-ui-affiche.css`) :
