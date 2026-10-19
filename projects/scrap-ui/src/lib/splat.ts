@@ -17,7 +17,7 @@ export const SCRAP_SPLAT_NAMES = Object.keys(SPLATS) as ScrapSplatName[];
 /**
  * Élément décoratif du module Affiche : éclaboussure ou griffure à poser en
  * fond de section. Ses réglages d'affichage viennent de la feuille Affiche
- * (`@use '@scrap-node/scrap-ui/styles/affiche'`).
+ * (`@use '@scrapnode/scrap-ui/styles/affiche'`).
  *
  * <scrap-splat name="burst" [size]="140" style="color: var(--scrap-copper)" />
  */

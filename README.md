@@ -34,39 +34,42 @@ npm start   # construit la lib puis sert la vitrine sur http://localhost:4200
 
 ## Utilisation dans un projet
 
-La lib est publiée sur **GitHub Packages** sous `@scrap-node/scrap-ui`
-(`@comechaslerie/scrap-ui` jusqu'en 0.2.0). GitHub
-Packages exige un token **même en lecture** : le projet consommateur a donc besoin d'un
-`.npmrc` routant le scope, et d'un PAT classique avec la portée `read:packages`.
-
-`.npmrc` du projet consommateur (versionné, sans le token) :
-
-```ini
-@scrap-node:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
-```
-
-Puis, avec `GITHUB_PACKAGES_TOKEN` dans l'environnement (shell, CI, `--build-arg` Docker) :
+La lib est publiée sur **npmjs.com**, en public, sous `@scrapnode/scrap-ui` : ni jeton
+ni `.npmrc` à prévoir.
 
 ```bash
-npm install @scrap-node/scrap-ui
-ng add @scrap-node/scrap-ui    # branche les styles dans la feuille du projet
+npm install @scrapnode/scrap-ui
+ng add @scrapnode/scrap-ui    # branche les styles dans la feuille du projet
 ```
 
 `ng add` lit `angular.json` pour trouver la bonne feuille de styles ; dans un
-workspace multi-projets, préciser la cible : `ng add @scrap-node/scrap-ui --project mon-app`.
+workspace multi-projets, préciser la cible : `ng add @scrapnode/scrap-ui --project mon-app`.
 
 À défaut, dans `styles.scss` :
 
 ```scss
-@use '@scrap-node/scrap-ui/styles/index';
-@use '@scrap-node/scrap-ui/styles/affiche'; // facultatif : le module Affiche
+@use '@scrapnode/scrap-ui/styles/index';
+@use '@scrapnode/scrap-ui/styles/affiche'; // facultatif : le module Affiche
 ```
+
+### Depuis un ancien nom
+
+Jusqu'en 0.3.0, le paquet était sur GitHub Packages : `@comechaslerie/scrap-ui` jusqu'en
+0.2.0, puis `@scrap-node/scrap-ui`. Pour passer à `@scrapnode/scrap-ui` :
+
+```bash
+npm uninstall @scrap-node/scrap-ui
+npm install @scrapnode/scrap-ui
+ng add @scrapnode/scrap-ui    # réécrit les @use de l'ancien nom
+```
+
+Restent à remplacer l'ancien nom dans les imports TypeScript, et à retirer du `.npmrc`
+la ligne qui routait l'ancien scope vers `npm.pkg.github.com`.
 
 ### Sans Angular
 
 Une page HTML ou une application Blazor prend la feuille compilée, livrée dans
-le paquet (`node_modules/@scrap-node/scrap-ui/css/`) :
+le paquet (`node_modules/@scrapnode/scrap-ui/css/`) :
 
 ```html
 <link rel="stylesheet" href="css/scrap-ui.css" />
@@ -189,7 +192,7 @@ la page.
 
 ### Module Affiche
 
-Avec `@use '@scrap-node/scrap-ui/styles/affiche'` (ou `css/scrap-ui-affiche.css`) :
+Avec `@use '@scrapnode/scrap-ui/styles/affiche'` (ou `css/scrap-ui-affiche.css`) :
 `.scrap-poster`, `.scrap-grain` (texture), `.scrap-torn-bottom` (bord déchiré),
 `.scrap-hero-title`, `.scrap-stamp` (tampon), `.scrap-rule` (trait de pinceau),
 les curseurs `.scrap-cursor-wrench`, `.scrap-cursor-marker`, `.scrap-cursor-spray`
@@ -197,7 +200,7 @@ et `.scrap-cursor-gear`, le composant `<scrap-splat>`, et les animations
 `.scrap-stamp-in`, `.scrap-reveal` et `.scrap-jitter`. Toutes neutralisées sous
 `prefers-reduced-motion`.
 
-Assets fournis (`node_modules/@scrap-node/scrap-ui/assets/`) : `favicon.svg` et
+Assets fournis (`node_modules/@scrapnode/scrap-ui/assets/`) : `favicon.svg` et
 `manifest.webmanifest` (template, remplacer le nom du projet).
 
 ## Développer
@@ -212,7 +215,7 @@ npm run visual       # régression visuelle Playwright
 npm run verify       # tout l'enchaînement, comme la CI
 ```
 
-Le `paths` du `tsconfig.json` racine mappe `@scrap-node/scrap-ui` → `dist/scrap-ui` :
+Le `paths` du `tsconfig.json` racine mappe `@scrapnode/scrap-ui` → `dist/scrap-ui` :
 la vitrine consomme la lib construite sans passer par npm. Pour un projet externe,
 `npm link` ou une dépendance `file:` vers `dist/scrap-ui` reste valable (avec
 `preserveSymlinks: true` et `prebundle.exclude` dans son `angular.json`).
@@ -281,20 +284,27 @@ par `npm run visual:update`, pour boucler vite pendant le développement.
 ## Publier une version
 
 Le tag est le déclencheur : `.github/workflows/release.yml` vérifie, construit la
-lib et sa feuille CSS, puis les publie sur GitHub Packages avec le `GITHUB_TOKEN`
-du runner — aucun PAT à stocker pour publier.
+lib et sa feuille CSS, puis les publie sur npmjs.com avec une attestation de
+provenance. Aucun jeton n'est stocké dans le dépôt : npm fait confiance à ce
+workflow et l'authentifie par OIDC (publication de confiance).
+
+Ce lien se règle une fois, sur npmjs.com : dans les réglages du paquet
+`@scrapnode/scrap-ui`, section _Trusted Publisher_, choisir GitHub Actions avec
+l'organisation `Scrap-Node`, le dépôt `ScrapUI` et le workflow `release.yml`. Il
+demande npm 11.5.1 ou plus, d'où Node 24 dans le workflow.
 
 ```bash
 # 1. bumper la version de la lib (c'est elle qui compte, pas celle de la racine)
 npm version --no-git-tag-version 0.3.0 --prefix projects/scrap-ui
-# 2. renseigner CHANGELOG.md
+# 2. renseigner CHANGELOG.md, et sa copie livrée dans le paquet : projects/scrap-ui/CHANGELOG.md
 git commit -am "scrap-ui 0.3.0"
 # 3. taguer : le workflow refuse un tag qui ne correspond pas à projects/scrap-ui/package.json
 git tag v0.3.0 && git push origin main --tags
 ```
 
-Pour un essai en local (`npm publish` depuis `dist/scrap-ui`), il faut un PAT avec
-`write:packages` — le workflow évite ce détour.
+Publier depuis un poste (`npm publish` dans `dist/scrap-ui`) demande un compte de
+l'organisation npm `scrapnode`, et la version partirait sans attestation de
+provenance : passer par le tag.
 
 ## Licence
 

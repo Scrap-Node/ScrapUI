@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SCRAP_SPLAT_NAMES, ScrapButton, ScrapSplat } from '@scrap-node/scrap-ui';
+import { SCRAP_SPLAT_NAMES, ScrapButton, ScrapSplat } from '@scrapnode/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 import { StoryReplay } from '../story-replay';
 

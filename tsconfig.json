@@ -12,7 +12,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "paths": {
-      "@scrap-node/scrap-ui": ["./dist/scrap-ui"]
+      "@scrapnode/scrap-ui": ["./dist/scrap-ui"]
     },
     "target": "ES2022",
     "module": "preserve"

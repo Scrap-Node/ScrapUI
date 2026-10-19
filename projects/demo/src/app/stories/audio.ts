@@ -20,7 +20,7 @@ import {
   ScrapWaveLine,
   type ScrapHistoryItem,
   type ScrapTimeRange,
-} from '@scrap-node/scrap-ui';
+} from '@scrapnode/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 import { destroyed, oscillo, peaks } from './samples';
 

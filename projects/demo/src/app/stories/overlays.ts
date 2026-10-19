@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { ScrapButton, ScrapModal, ScrapToast, type ScrapTone } from '@scrap-node/scrap-ui';
+import { ScrapButton, ScrapModal, ScrapToast, type ScrapTone } from '@scrapnode/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 
 @Component({

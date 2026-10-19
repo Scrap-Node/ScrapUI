@@ -5,7 +5,7 @@ import { Tree } from '@angular-devkit/schematics';
 // Chemin depuis la racine du workspace : les specs tournent avec le dépôt
 // pour répertoire courant, et le schematic est un .js chargé à l'exécution.
 const COLLECTION = join(process.cwd(), 'projects/scrap-ui/schematics/collection.json');
-const IMPORT_LINE = "@use '@scrap-node/scrap-ui/styles/index';";
+const IMPORT_LINE = "@use '@scrapnode/scrap-ui/styles/index';";
 
 interface WorkspaceProject {
   projectType: 'application' | 'library';
@@ -68,22 +68,25 @@ describe('ng-add', () => {
     expect(occurrences).toBe(1);
   });
 
-  it("passe les imports de l'ancien nom du paquet au nouveau", async () => {
-    tree.create(
-      'angular.json',
-      workspace({ app: { projectType: 'application', styles: ['src/styles.scss'] } }),
-    );
-    tree.create(
-      'src/styles.scss',
-      "@use '@comechaslerie/scrap-ui/styles/index';\n@use '@comechaslerie/scrap-ui/styles/affiche';\nbody {}\n",
-    );
+  it.each(['@comechaslerie/scrap-ui', '@scrap-node/scrap-ui'])(
+    "passe les imports de l'ancien nom %s au nouveau",
+    async (old) => {
+      tree.create(
+        'angular.json',
+        workspace({ app: { projectType: 'application', styles: ['src/styles.scss'] } }),
+      );
+      tree.create(
+        'src/styles.scss',
+        `@use '${old}/styles/index';\n@use '${old}/styles/affiche';\nbody {}\n`,
+      );
 
-    const content = (await run()).readContent('src/styles.scss');
-    expect(content).not.toContain('@comechaslerie');
-    expect(content.startsWith(IMPORT_LINE)).toBe(true);
-    expect(content).toContain("@use '@scrap-node/scrap-ui/styles/affiche';");
-    expect(content.split('scrap-ui/styles/index').length - 1).toBe(1);
-  });
+      const content = (await run()).readContent('src/styles.scss');
+      expect(content).not.toContain(old);
+      expect(content.startsWith(IMPORT_LINE)).toBe(true);
+      expect(content).toContain("@use '@scrapnode/scrap-ui/styles/affiche';");
+      expect(content.split('scrap-ui/styles/index').length - 1).toBe(1);
+    },
+  );
 
   it('suit le chemin déclaré dans angular.json, pas src/styles.scss par convention', async () => {
     tree.create(
