@@ -105,6 +105,20 @@ $scrap-ochre: #b3822f;
     --scrap-data-loop: var(--scrap-steel);
     --scrap-data-added: var(--scrap-moss);
     --scrap-data-removed: var(--scrap-rust);
+    /* Diff d'octets : cuivre sourd quand c'est léger, cuivre franc quand
+       c'est massif. */
+    --scrap-data-diff-lo: light-dark(#e6d6c9, #4b3324);
+    --scrap-data-diff-hi: var(--scrap-accent-text);
+    /* Spectrogramme : plancher, cuivre, crête. La rampe s'inverse avec le
+       thème : sur fond clair, plus d'énergie veut dire plus sombre. */
+    --scrap-data-spectro-0: var(--scrap-sunken);
+    --scrap-data-spectro-1: var(--scrap-copper);
+    --scrap-data-spectro-2: light-dark(#322216, #fff4e8);
+    /* Voile posé sur ce qui sort de la zone ciblée */
+    --scrap-data-shade: light-dark(rgb(250 249 248 / 0.72), rgb(18 12 7 / 0.66));
+    /* Les canvas lisent ces jetons par ScrapTheme.color() : pas de
+       color-mix() ici, le navigateur le rendrait dans un espace de couleur
+       que les canvas ne lisent pas partout. */
 
     /* ---------- Code ---------- */
     --scrap-code-keyword: light-dark(#824f2f, #ce9674);

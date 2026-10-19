@@ -85,18 +85,18 @@ Les classes suivent la même nomenclature que les composants : `.scrap-btn`,
 
 ### Composants
 
-| Famille          | Composants et directives                                                                                                     |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Bases            | `scrap-icon`, `kbd[scrap-kbd]`, `ScrapTheme`, `scrap-theme-toggle`                                                           |
-| Commandes        | `button[scrap-button]`, `button[scrap-icon-button]`, `[scrapTooltip]`, `scrap-toolbar`, `scrap-menu`, `[scrapMenuTrigger]`   |
-| Saisie           | `scrap-field`, `[scrapInput]`, `scrap-select`, `scrap-segmented`, `scrap-number-field`, `scrap-slider`, `scrap-dropzone`     |
-| Choix            | `label[scrapChoice]`, `input[scrapCheckbox]`, `input[scrapRadio]`, `input[scrapSwitch]`                                      |
-| Affichage        | `scrap-badge`, `scrap-card`, `scrap-tabs`, `dl[scrap-props]`, `table[scrap-table]`, `details[scrap-disclosure]`              |
-| États et retours | `scrap-spinner`, `scrap-progress`, `scrap-callout`, `ScrapToast`, `scrap-toasts`, `scrap-modal`, `scrap-empty-state`         |
-| Navigation       | `scrap-breadcrumbs`, `scrap-tree`, `scrap-sheet`, `scrap-history`, `ScrapCommands`, `scrap-command-palette`                  |
-| Applications     | `scrap-shell` et ses régions, `scrap-statusbar`, `scrap-header`, `scrap-footer`, `scrap-error-page`                          |
-| Audio et montage | `scrap-wave-bars`, `scrap-wave-line`, `scrap-vu-meter`, `scrap-wave-live`, `scrap-transport`, `scrap-timeline`, `scrap-lane` |
-| Affiche          | `scrap-splat`                                                                                                                |
+| Famille          | Composants et directives                                                                                                                       |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bases            | `scrap-icon`, `kbd[scrap-kbd]`, `ScrapTheme`, `scrap-theme-toggle`                                                                             |
+| Commandes        | `button[scrap-button]`, `button[scrap-icon-button]`, `[scrapTooltip]`, `scrap-toolbar`, `scrap-menu`, `[scrapMenuTrigger]`                     |
+| Saisie           | `scrap-field`, `[scrapInput]`, `scrap-select`, `scrap-segmented`, `scrap-number-field`, `scrap-slider`, `scrap-range-slider`, `scrap-dropzone` |
+| Choix            | `label[scrapChoice]`, `input[scrapCheckbox]`, `input[scrapRadio]`, `input[scrapSwitch]`                                                        |
+| Affichage        | `scrap-badge`, `scrap-card`, `scrap-tabs`, `dl[scrap-props]`, `table[scrap-table]`, `details[scrap-disclosure]`                                |
+| États et retours | `scrap-spinner`, `scrap-progress`, `scrap-callout`, `ScrapToast`, `scrap-toasts`, `scrap-modal`, `scrap-empty-state`                           |
+| Navigation       | `scrap-breadcrumbs`, `scrap-tree`, `scrap-sheet`, `scrap-history`, `ScrapCommands`, `scrap-command-palette`                                    |
+| Applications     | `scrap-shell` et ses régions, `scrap-statusbar`, `scrap-header`, `scrap-footer`, `scrap-error-page`                                            |
+| Audio et montage | `scrap-wave-bars`, `scrap-wave-line`, `scrap-vu-meter`, `scrap-wave-live`, `scrap-transport`, `scrap-timeline`, `scrap-lane`                   |
+| Affiche          | `scrap-splat`                                                                                                                                  |
 
 Tous les composants sont autonomes, en `OnPush`, sûrs en SSR. Les contrôles de
 saisie implémentent `ControlValueAccessor` : `formControlName` et `[(ngModel)]`
@@ -189,6 +189,18 @@ theme.toggle();
 
 `data-scrap-theme="dark"` (ou `light`) force aussi le thème d'une seule zone de
 la page.
+
+Pour dessiner dans un canvas, `color()` rend la couleur calculée d'un jeton : les
+jetons s'écrivent en `light-dark()` et en `var()`, qu'un canvas ne sait pas lire.
+
+```ts
+effect(() => {
+  theme.theme(); // redessine à chaque changement de thème
+  ctx.fillStyle = theme.color('--scrap-data-altered'); // 'rgb(149, 97, 64)'
+  ctx.strokeStyle = theme.rgba('--scrap-data-playhead', 0.6);
+  const [r, g, b] = theme.rgb('--scrap-data-spectro-1'); // pour une rampe
+});
+```
 
 ### Module Affiche
 

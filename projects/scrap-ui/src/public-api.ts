@@ -23,6 +23,7 @@ export * from './lib/kbd';
 export * from './lib/menu';
 export * from './lib/modal';
 export * from './lib/number-field';
+export * from './lib/range-slider';
 export * from './lib/scroll-lock';
 export * from './lib/segmented';
 export * from './lib/select';

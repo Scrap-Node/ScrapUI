@@ -147,6 +147,32 @@ describe('ScrapSlider', () => {
     );
     expect(bounds).toEqual(['0,25', '12\u00a0000']);
   });
+
+  it('met en forme valeur, bornes et texte annoncé avec la fonction fournie', async () => {
+    const hex = (v: number) => `0x${v.toString(16).toUpperCase().padStart(2, '0')}`;
+    fixture.componentRef.setInput('format', hex);
+    fixture.componentRef.setInput('showValue', true);
+    fixture.componentRef.setInput('label', 'Masque');
+    fixture.componentRef.setInput('min', 1);
+    fixture.componentRef.setInput('max', 255);
+    fixture.componentInstance.value.set(255);
+    await fixture.whenStable();
+
+    const bounds = [...fixture.nativeElement.querySelectorAll('.scrap-slider__bound')].map(
+      (e: Element) => e.textContent?.trim(),
+    );
+    expect(bounds).toEqual(['0x01', '0xFF']);
+    expect(fixture.nativeElement.querySelector('output').textContent?.trim()).toBe('0xFF');
+    expect(range(fixture).getAttribute('aria-valuetext')).toBe('0xFF');
+  });
+
+  it("ajoute l'unité après la mise en forme", async () => {
+    fixture.componentRef.setInput('format', (v: number) => (v / 10).toFixed(1));
+    fixture.componentRef.setInput('unit', 's');
+    fixture.componentInstance.value.set(25);
+    await fixture.whenStable();
+    expect(range(fixture).getAttribute('aria-valuetext')).toBe('2.5\u00a0s');
+  });
 });
 
 @Component({

@@ -245,7 +245,9 @@ describe('ScrapTimeline', () => {
     <scrap-shell>
       <a scrapShellBrand href="/">DataBender</a>
       <header scrapShellHead>Menus</header>
-      <nav scrapShellNav>Fichiers</nav>
+      @if (nav()) {
+        <nav scrapShellNav>Fichiers</nav>
+      }
       <main scrapShellMain>Travail</main>
       @if (aside()) {
         <aside scrapShellAside>Propriétés</aside>
@@ -260,6 +262,7 @@ describe('ScrapTimeline', () => {
   `,
 })
 class ShellHost {
+  readonly nav = signal(true);
   readonly aside = signal(true);
 }
 
@@ -278,6 +281,13 @@ describe('ScrapShell et ScrapStatusbar', () => {
     );
     expect(classes.every(Boolean)).toBe(true);
     expect(shell().classList).toContain('scrap-shell');
+  });
+
+  it('donne toute la largeur à la zone de travail sans navigation', async () => {
+    expect(shell().classList).not.toContain('scrap-shell--no-nav');
+    fixture.componentInstance.nav.set(false);
+    await fixture.whenStable();
+    expect(shell().classList).toContain('scrap-shell--no-nav');
   });
 
   it("donne la place de l'inspecteur à la zone de travail quand il manque", async () => {

@@ -12,6 +12,25 @@ si l'API TypeScript ne bouge pas.
 
 ## [Non publié]
 
+## [0.4.0] — 2026-10-19
+
+### Ajouté
+
+- `scrap-range-slider` : un curseur double, deux poignées sur une même piste,
+  pour régler une plage (bande de fréquences, fenêtre de temps). Une poignée ne
+  passe jamais l'autre ; avec les formulaires Angular, la valeur est le couple
+  `[bas, haut]`.
+- `scrap-slider` : `format` met en forme la valeur, les bornes et le texte
+  annoncé (hexadécimal, dixièmes affichés en secondes, échelle
+  logarithmique) ; l'unité s'ajoute après.
+- `scrap-shell` : sans `scrapShellNav`, la marque prend la largeur de son
+  contenu et la zone de travail occupe toute la largeur sous elle.
+- `ScrapTheme.color()`, `rgb()` et `rgba()` : la couleur calculée d'un jeton,
+  pour dessiner dans un canvas. Le résultat suit le thème affiché.
+- Jetons de données : diff d'octets (`--scrap-data-diff-lo` et `-hi`), rampe de
+  spectrogramme (`--scrap-data-spectro-0` à `-2`) et voile posé hors de la
+  zone ciblée (`--scrap-data-shade`).
+
 ## [0.3.1] — 2026-10-19
 
 ### Modifié

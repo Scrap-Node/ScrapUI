@@ -1,11 +1,17 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { ScrapIcon, ScrapSlider, type ScrapIconName } from '@scrapnode/scrap-ui';
+import { ScrapIcon, ScrapRangeSlider, ScrapSlider, type ScrapIconName } from '@scrapnode/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
+
+const TENTHS = new Intl.NumberFormat('fr-FR', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+const KHZ = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
 
 @Component({
   selector: 'story-sliders',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StoryPage, StoryCase, ScrapSlider, ScrapIcon],
+  imports: [StoryPage, StoryCase, ScrapSlider, ScrapRangeSlider, ScrapIcon],
   template: `
     <story-page
       title="Curseurs"
@@ -49,6 +55,53 @@ import { StoryCase, StoryPage } from '../story-page';
         <scrap-slider [(value)]="fine" label="Réglage fin" ticks />
       </story-case>
 
+      <story-case
+        name="Valeur mise en forme"
+        note="Une fonction met en forme la valeur et les bornes&nbsp;; l'unité s'ajoute après."
+        [stack]="true"
+      >
+        <scrap-slider
+          [(value)]="mask"
+          label="Masque XOR"
+          showValue
+          [min]="1"
+          [max]="255"
+          [format]="hex"
+        />
+        <scrap-slider
+          [(value)]="preRoll"
+          label="Pré-roll"
+          showValue
+          unit="s"
+          [min]="0"
+          [max]="100"
+          [format]="tenths"
+        />
+      </story-case>
+
+      <story-case
+        name="Curseur double"
+        note="Une plage, deux poignées sur la même piste&nbsp;; une poignée ne passe jamais l'autre."
+        [stack]="true"
+      >
+        <scrap-range-slider
+          label="Bande visée"
+          showValue
+          [(low)]="bandLow"
+          [(high)]="bandHigh"
+          [max]="1000"
+          [format]="hertz"
+        />
+        <scrap-range-slider
+          label="Fenêtre"
+          showValue
+          unit="s"
+          [(low)]="windowLow"
+          [(high)]="windowHigh"
+          [max]="60"
+        />
+      </story-case>
+
       <story-case name="Sans bornes, désactivé" [stack]="true">
         <scrap-slider [(value)]="bare" [showBounds]="false" label="Sans bornes" />
         <scrap-slider [(value)]="locked" disabled label="Verrouillé" />
@@ -69,6 +122,20 @@ export class SlidersStory {
   readonly fine = signal(42);
   readonly bare = signal(25);
   readonly locked = signal(65);
+  readonly mask = signal(255);
+  readonly preRoll = signal(20);
+  readonly bandLow = signal(180);
+  readonly bandHigh = signal(720);
+  readonly windowLow = signal(12);
+  readonly windowHigh = signal(38);
+
+  readonly hex = (v: number) => `0x${v.toString(16).toUpperCase().padStart(2, '0')}`;
+  readonly tenths = (v: number) => TENTHS.format(v / 10);
+  /** Position 0 à 1000 sur une échelle logarithmique, de 20 Hz à 20 kHz. */
+  readonly hertz = (v: number) => {
+    const hz = 20 * Math.pow(1000, v / 1000);
+    return hz < 1000 ? `${Math.round(hz)}\u00a0Hz` : `${KHZ.format(hz / 1000)}\u00a0kHz`;
+  };
 
   iconFor(v: number): ScrapIconName {
     return v === 0 ? 'mute' : v < 50 ? 'volume-low' : 'volume';

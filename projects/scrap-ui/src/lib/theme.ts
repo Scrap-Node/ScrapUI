@@ -32,6 +32,9 @@ export class ScrapTheme {
   /** Préférence retenue : `light`, `dark`, ou `system`. */
   readonly preference = this.pref.asReadonly();
 
+  private readonly colors = new Map<string, string>();
+  private probe?: HTMLElement;
+
   constructor() {
     if (!this.isBrowser) return;
     const stored = this.stored();
@@ -63,6 +66,58 @@ export class ScrapTheme {
 
   toggle(): void {
     this.set(this.state() === 'dark' ? 'light' : 'dark');
+  }
+
+  /**
+   * Couleur calculée d'un jeton (`--scrap-data-altered`…), en `rgb(…)` ou
+   * `rgba(…)` : ce qu'attend un canvas. Les jetons s'écrivent en
+   * `light-dark()` et en `var()`, que `getComputedStyle` rendrait tels quels
+   * et qu'un canvas refuse sans erreur ; une sonde les fait calculer par le
+   * navigateur.
+   *
+   * Le résultat suit le thème affiché et reste en cache jusqu'au changement
+   * suivant : redessiner dans un `effect()` qui lit `theme()` suffit.
+   * `within` vise une zone qui force son propre thème (`data-scrap-theme`) ;
+   * la couleur est alors celle de cette zone, sans cache. Sur le serveur, la
+   * chaîne est vide.
+   */
+  color(token: string, within?: Element): string {
+    if (!this.isBrowser) return '';
+    const key = `${this.state()}|${token}`;
+    const cached = within ? undefined : this.colors.get(key);
+    if (cached !== undefined) return cached;
+
+    const probe = this.probeIn(within ?? this.document.body ?? this.document.documentElement);
+    probe.style.color = `var(${token})`;
+    const value = this.document.defaultView?.getComputedStyle(probe).color ?? '';
+    if (!within) this.colors.set(key, value);
+    return value;
+  }
+
+  /** Composantes `[r, g, b]` (0 à 255) d'un jeton, pour composer rampes et dégradés. */
+  rgb(token: string, within?: Element): [number, number, number] {
+    const m = /rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/.exec(this.color(token, within));
+    return m ? [Math.round(+m[1]), Math.round(+m[2]), Math.round(+m[3])] : [0, 0, 0];
+  }
+
+  /** Le jeton avec une opacité, en `rgba(…)`. */
+  rgba(token: string, alpha: number, within?: Element): string {
+    const [r, g, b] = this.rgb(token, within);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  /** Sonde invisible, posée là où le jeton doit être résolu. */
+  private probeIn(parent: Element): HTMLElement {
+    let probe = this.probe;
+    if (!probe) {
+      probe = this.document.createElement('i');
+      probe.setAttribute('aria-hidden', 'true');
+      probe.style.cssText =
+        'position:absolute;width:0;height:0;overflow:hidden;visibility:hidden;pointer-events:none';
+      this.probe = probe;
+    }
+    if (probe.parentElement !== parent) parent.appendChild(probe);
+    return probe;
   }
 
   private apply(theme: ScrapThemeName): void {

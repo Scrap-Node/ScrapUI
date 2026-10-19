@@ -43,7 +43,9 @@ export class ScrapShellStatus {}
  * </scrap-shell>
  * ```
  *
- * Sans `scrapShellAside`, la zone de travail prend sa place. La coquille
+ * Sans `scrapShellNav`, la marque prend la largeur de son contenu et la zone
+ * de travail occupe toute la largeur sous elle ; sans `scrapShellAside`, la
+ * zone de travail prend sa place. La coquille
  * prend la hauteur qu'on lui donne (`height: 100dvh` pour tout l'écran) ;
  * largeurs et hauteurs par `--shell-nav`, `--shell-aside`, `--shell-head`
  * et `--shell-status`.
@@ -54,10 +56,12 @@ export class ScrapShellStatus {}
   template: `<ng-content />`,
   host: {
     class: 'scrap-shell',
+    '[class.scrap-shell--no-nav]': '!nav()',
     '[class.scrap-shell--no-aside]': '!aside()',
   },
 })
 export class ScrapShell {
+  protected readonly nav = contentChild(ScrapShellNav);
   protected readonly aside = contentChild(ScrapShellAside);
 }
 

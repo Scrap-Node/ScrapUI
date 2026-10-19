@@ -23,6 +23,7 @@ const NUMBER = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 3 });
  *   <scrap-icon icon name="volume" />
  * </scrap-slider>
  * <scrap-slider [(value)]="densite" label="Densité" showValue unit="%" />
+ * <scrap-slider [(value)]="masque" label="Masque XOR" showValue [format]="enHexa" />
  * ```
  *
  * Utilisable aussi avec les formulaires Angular (`formControlName`,
@@ -48,7 +49,7 @@ const NUMBER = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 3 });
     <div class="scrap-slider__row">
       <ng-content select="[icon]" />
       @if (showBounds()) {
-        <span class="scrap-slider__bound" aria-hidden="true">{{ format(min()) }}</span>
+        <span class="scrap-slider__bound" aria-hidden="true">{{ display(min()) }}</span>
       }
       <div class="scrap-slider__track">
         @if (ticks()) {
@@ -76,7 +77,7 @@ const NUMBER = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 3 });
         />
       </div>
       @if (showBounds()) {
-        <span class="scrap-slider__bound" aria-hidden="true">{{ format(max()) }}</span>
+        <span class="scrap-slider__bound" aria-hidden="true">{{ display(max()) }}</span>
       }
     </div>
   `,
@@ -97,6 +98,12 @@ export class ScrapSlider implements ControlValueAccessor {
   readonly showValue = input(false, { transform: booleanAttribute });
   /** Unité accolée à la valeur affichée : `%`, `s`, `o`… */
   readonly unit = input<string>();
+  /**
+   * Mise en forme des nombres : valeur, bornes et texte annoncé. Par défaut,
+   * l'usage français. Pour un masque en hexadécimal, des dixièmes affichés en
+   * secondes, une échelle logarithmique… L'unité s'ajoute après.
+   */
+  readonly format = input<(value: number) => string>();
   readonly disabled = input(false, { transform: booleanAttribute });
   /** Étiquette du curseur : visible avec `showValue`, accessible dans tous les cas. */
   readonly label = input<string>();
@@ -117,7 +124,7 @@ export class ScrapSlider implements ControlValueAccessor {
   protected readonly valueText = computed(() => {
     const unit = this.unit();
     // Espace insécable entre la valeur et l'unité, comme le veut l'usage.
-    return unit ? `${this.format(this.value())}\u00a0${unit}` : this.format(this.value());
+    return unit ? `${this.display(this.value())}\u00a0${unit}` : this.display(this.value());
   });
 
   protected readonly tickList = computed(() => {
@@ -127,7 +134,9 @@ export class ScrapSlider implements ControlValueAccessor {
     return Array.from({ length: n + 1 }, (_, i) => i / n);
   });
 
-  protected format(value: number): string {
+  protected display(value: number): string {
+    const format = this.format();
+    if (format) return format(value);
     // Espace fine insécable des milliers → espace insécable : présente dans
     // toutes les polices, et le nombre ne se coupe jamais en fin de ligne.
     return NUMBER.format(value).replace(/\u202f/g, '\u00a0');
