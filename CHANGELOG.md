@@ -11,6 +11,17 @@ si l'API TypeScript ne bouge pas.
 
 ## [Non publié]
 
+## [0.3.1] — 2026-10-19
+
+### Modifié
+
+- Le paquet est publié sur npmjs.com, en public : l'installer ne demande plus ni
+  jeton ni `.npmrc`. Chaque version porte une attestation de provenance, qui la
+  relie au commit et au workflow qui l'ont produite.
+- Les versions jusqu'à 0.3.0 restent sur GitHub Packages. Pour passer à 0.3.1, un
+  projet retire de son `.npmrc` la ligne qui route `@scrap-node` vers
+  `npm.pkg.github.com`, puis réinstalle.
+
 ## [0.3.0] — 2026-10-18
 
 ### Ajouté

@@ -34,24 +34,17 @@ npm start   # construit la lib puis sert la vitrine sur http://localhost:4200
 
 ## Utilisation dans un projet
 
-La lib est publiée sur **GitHub Packages** sous `@scrap-node/scrap-ui`
-(`@comechaslerie/scrap-ui` jusqu'en 0.2.0). GitHub
-Packages exige un token **même en lecture** : le projet consommateur a donc besoin d'un
-`.npmrc` routant le scope, et d'un PAT classique avec la portée `read:packages`.
-
-`.npmrc` du projet consommateur (versionné, sans le token) :
-
-```ini
-@scrap-node:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
-```
-
-Puis, avec `GITHUB_PACKAGES_TOKEN` dans l'environnement (shell, CI, `--build-arg` Docker) :
+La lib est publiée sur **npmjs.com**, en public, sous `@scrap-node/scrap-ui` : ni jeton
+ni `.npmrc` à prévoir.
 
 ```bash
 npm install @scrap-node/scrap-ui
 ng add @scrap-node/scrap-ui    # branche les styles dans la feuille du projet
 ```
+
+Les versions jusqu'à 0.3.0 sont restées sur GitHub Packages (`@comechaslerie/scrap-ui`
+jusqu'en 0.2.0). Un projet qui passe en 0.3.1 ou plus retire de son `.npmrc` la ligne qui
+route `@scrap-node` vers `npm.pkg.github.com`, puis réinstalle.
 
 `ng add` lit `angular.json` pour trouver la bonne feuille de styles ; dans un
 workspace multi-projets, préciser la cible : `ng add @scrap-node/scrap-ui --project mon-app`.
@@ -281,8 +274,9 @@ par `npm run visual:update`, pour boucler vite pendant le développement.
 ## Publier une version
 
 Le tag est le déclencheur : `.github/workflows/release.yml` vérifie, construit la
-lib et sa feuille CSS, puis les publie sur GitHub Packages avec le `GITHUB_TOKEN`
-du runner — aucun PAT à stocker pour publier.
+lib et sa feuille CSS, puis les publie sur npmjs.com avec une attestation de
+provenance. Le jeton de publication est le secret `NPM_TOKEN` du dépôt : un jeton
+d'accès granulaire npm, avec le droit d'écriture sur le scope `@scrap-node`.
 
 ```bash
 # 1. bumper la version de la lib (c'est elle qui compte, pas celle de la racine)

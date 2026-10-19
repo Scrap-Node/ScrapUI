@@ -1,5 +1,7 @@
-# Publication de @scrap-node/scrap-ui sur GitHub Packages, déclenchée par un tag vX.Y.Z.
-# GITHUB_TOKEN suffit (packages: write) : aucun PAT à stocker pour publier.
+# Publication de @scrap-node/scrap-ui sur npmjs.com, en public, déclenchée par un
+# tag vX.Y.Z. Le jeton de publication est le secret NPM_TOKEN du dépôt ; la
+# provenance (id-token) relie chaque version publiée au commit et au workflow qui
+# l'ont produite.
 name: release
 
 on:
@@ -12,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -20,8 +22,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          registry-url: https://npm.pkg.github.com
-          scope: '@scrap-node'
+          registry-url: https://registry.npmjs.org
 
       - run: npm ci
 
@@ -46,8 +47,9 @@ jobs:
       # La lib et sa feuille CSS compilée (css/scrap-ui.css), pour les projets sans Angular
       - run: npm run build
 
+      # Accès public, provenance et registre viennent du publishConfig du paquet
       - name: Publier
         working-directory: dist/scrap-ui
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

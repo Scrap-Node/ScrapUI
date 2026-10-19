@@ -8,23 +8,14 @@ sans Angular.
 
 ## Installation
 
-Jusqu'en 0.2.0, le paquet s'appelait `@comechaslerie/scrap-ui` : `ng add @scrap-node/scrap-ui`
-reprend l'ancien import de styles.
-
-Le paquet vit sur GitHub Packages, qui exige un token **même en lecture**. Dans le projet
-consommateur, un `.npmrc` versionné :
-
-```ini
-@scrap-node:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
-```
-
-et un PAT classique avec la portée `read:packages` exposé en `GITHUB_PACKAGES_TOKEN` :
-
 ```bash
 npm install @scrap-node/scrap-ui
 ng add @scrap-node/scrap-ui    # branche le thème dans styles.scss
 ```
+
+Le paquet est public sur npmjs.com : ni jeton ni `.npmrc`. Les versions jusqu'à 0.3.0
+sont sur GitHub Packages, sous `@comechaslerie/scrap-ui` jusqu'en 0.2.0 ;
+`ng add @scrap-node/scrap-ui` reprend l'ancien import de styles.
 
 ## Utilisation
 
