@@ -7,9 +7,10 @@
 // le schematic dans un workspace multi-projets, et pour un projet dont le
 // sourceRoot n'est pas `src/`.
 
-const PACKAGE = '@scrap-node/scrap-ui';
-// Nom du paquet jusqu'en 0.2.0 : un projet déjà équipé garde cet import.
-const OLD_PACKAGE = '@comechaslerie/scrap-ui';
+const PACKAGE = '@scrapnode/scrap-ui';
+// Anciens noms du paquet, sur GitHub Packages : @comechaslerie jusqu'en 0.2.0,
+// @scrap-node en 0.3.0. Un projet déjà équipé garde leurs imports.
+const OLD_PACKAGES = ['@comechaslerie/scrap-ui', '@scrap-node/scrap-ui'];
 const IMPORT_LINE = `@use '${PACKAGE}/styles/index';\n`;
 const MARKER = 'scrap-ui/styles';
 
@@ -66,9 +67,13 @@ function ngAdd(options = {}) {
     }
 
     const content = tree.read(scss).toString('utf-8');
-    if (content.includes(`${OLD_PACKAGE}/`)) {
-      // L'ancien nom ne se résout plus une fois le paquet renommé installé.
-      tree.overwrite(scss, content.split(`${OLD_PACKAGE}/`).join(`${PACKAGE}/`));
+    const renamed = OLD_PACKAGES.reduce(
+      (text, old) => text.split(`${old}/`).join(`${PACKAGE}/`),
+      content,
+    );
+    if (renamed !== content) {
+      // Un ancien nom ne se résout plus une fois le paquet renommé installé.
+      tree.overwrite(scss, renamed);
       context.logger.info(`✔ Imports Scrap UI de ${scss} passés à ${PACKAGE}`);
     } else if (content.includes(MARKER)) {
       context.logger.info(`✔ Thème Scrap UI déjà présent dans ${scss}`);

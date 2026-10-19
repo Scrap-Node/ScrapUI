@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ScrapButton, ScrapErrorPage } from '@scrap-node/scrap-ui';
+import { ScrapButton, ScrapErrorPage } from '@scrapnode/scrap-ui';
 
 @Component({
   selector: 'app-not-found',

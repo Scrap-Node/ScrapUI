@@ -14,10 +14,10 @@ const out = join(root, 'dist/scrap-ui/css');
 
 const BANNER = {
   'scrap-ui.css':
-    '/* @scrap-node/scrap-ui : jetons, base et composants, sans framework.\n' +
+    '/* @scrapnode/scrap-ui : jetons, base et composants, sans framework.\n' +
     '   Thème : celui du système, ou data-scrap-theme="light|dark" sur <html> ou sur une zone. */\n',
   'scrap-ui-affiche.css':
-    '/* @scrap-node/scrap-ui : module Affiche (grain, tampons, bords déchirés, éclaboussures). */\n',
+    '/* @scrapnode/scrap-ui : module Affiche (grain, tampons, bords déchirés, éclaboussures). */\n',
 };
 
 mkdirSync(out, { recursive: true });

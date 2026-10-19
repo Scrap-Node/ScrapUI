@@ -1,7 +1,8 @@
 # Journal des modifications
 
-Toutes les évolutions notables de `@scrap-node/scrap-ui`, publié sous
-`@comechaslerie/scrap-ui` jusqu'en 0.2.0.
+Toutes les évolutions notables de `@scrapnode/scrap-ui`, publié sur GitHub
+Packages sous `@comechaslerie/scrap-ui` jusqu'en 0.2.0, puis sous
+`@scrap-node/scrap-ui` en 0.3.0.
 
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le
 versionnage respecte [SemVer](https://semver.org/lang/fr/). Pour une librairie
@@ -15,12 +16,16 @@ si l'API TypeScript ne bouge pas.
 
 ### Modifié
 
-- Le paquet est publié sur npmjs.com, en public : l'installer ne demande plus ni
-  jeton ni `.npmrc`. Chaque version porte une attestation de provenance, qui la
-  relie au commit et au workflow qui l'ont produite.
-- Les versions jusqu'à 0.3.0 restent sur GitHub Packages. Pour passer à 0.3.1, un
-  projet retire de son `.npmrc` la ligne qui route `@scrap-node` vers
-  `npm.pkg.github.com`, puis réinstalle.
+- Le paquet devient `@scrapnode/scrap-ui`, publié sur npmjs.com, en public :
+  l'installer ne demande plus ni jeton ni `.npmrc`. Pour y passer depuis
+  `@scrap-node/scrap-ui`, un projet désinstalle l'ancien paquet, installe le
+  nouveau, remplace l'ancien nom dans ses imports TypeScript, et retire de son
+  `.npmrc` la ligne qui route `@scrap-node` vers `npm.pkg.github.com`.
+  `ng add @scrapnode/scrap-ui` réécrit les `@use` des deux anciens noms.
+- Chaque version porte une attestation de provenance, qui la relie au commit et
+  au workflow qui l'ont produite. Le workflow publie sans jeton : npm lui fait
+  confiance et l'authentifie par OIDC.
+- Les versions jusqu'à 0.3.0 restent sur GitHub Packages, sous leur ancien nom.
 
 ## [0.3.0] — 2026-10-18
 

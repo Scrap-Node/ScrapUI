@@ -25,7 +25,7 @@ import {
   ScrapTree,
   ScrapWaveBars,
   type ScrapTreeNode,
-} from '@scrap-node/scrap-ui';
+} from '@scrapnode/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 import { destroyed, peaks } from './samples';
 

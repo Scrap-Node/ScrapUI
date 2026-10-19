@@ -15,7 +15,7 @@ import {
   ScrapToolbarSeparator,
   ScrapToolbarSpacer,
   type ScrapIconName,
-} from '@scrap-node/scrap-ui';
+} from '@scrapnode/scrap-ui';
 import { StoryCase, StoryPage } from '../story-page';
 
 interface Tool {

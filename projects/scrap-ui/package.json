@@ -1,5 +1,5 @@
 {
-  "name": "@scrap-node/scrap-ui",
+  "name": "@scrapnode/scrap-ui",
   "version": "0.3.1",
   "description": "Bibliothèque d'interface des projets Scrap Node : jetons, composants Angular et feuille CSS sans framework",
   "author": "comeChaslerie",
