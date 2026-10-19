@@ -19,6 +19,15 @@
     --shell-aside: 0px;
     grid-template-areas: 'brand head head' 'nav main main' 'status status status';
   }
+  // Sans navigation : la marque prend la largeur de son contenu, et la zone
+  // de travail occupe toute la largeur sous elle.
+  .scrap-shell--no-nav {
+    grid-template-columns: auto minmax(0, 1fr) var(--shell-aside);
+    grid-template-areas: 'brand head head' 'main main aside' 'status status status';
+  }
+  .scrap-shell--no-nav.scrap-shell--no-aside {
+    grid-template-areas: 'brand head head' 'main main main' 'status status status';
+  }
   .scrap-shell__brand {
     grid-area: brand;
     display: flex;
@@ -85,7 +94,9 @@
   // de déborder de la page en écrasant la zone de travail.
   @media (max-width: 720px) {
     .scrap-shell,
-    .scrap-shell--no-aside {
+    .scrap-shell--no-aside,
+    .scrap-shell--no-nav,
+    .scrap-shell--no-nav.scrap-shell--no-aside {
       grid-template-columns: minmax(0, 1fr);
       // max-content : chaque région garde sa hauteur, c'est la coquille qui défile.
       grid-template-rows:
