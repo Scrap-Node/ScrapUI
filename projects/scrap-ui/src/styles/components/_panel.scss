@@ -1,0 +1,86 @@
+@layer scrap.components {
+  // ------------------------------------------------------------
+  // Panneau d'inspecteur
+  // ------------------------------------------------------------
+  .scrap-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    background: var(--scrap-surface);
+  }
+  .scrap-panel__head {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--scrap-space-2);
+    padding: var(--scrap-space-3) var(--scrap-space-3) var(--scrap-space-2) var(--scrap-space-4);
+  }
+  .scrap-panel__title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font: var(--scrap-weight-strong) var(--scrap-fs-l) / 1.3 var(--scrap-font-display);
+    color: var(--scrap-ink-strong);
+    letter-spacing: 0;
+  }
+  .scrap-panel__body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 0 var(--scrap-space-4) var(--scrap-space-4);
+  }
+  .scrap-panel__foot {
+    flex: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--scrap-space-2);
+    padding: var(--scrap-space-3) var(--scrap-space-4);
+    border-top: 1px solid var(--scrap-line);
+  }
+  .scrap-panel__head:empty,
+  .scrap-panel__foot:empty {
+    display: none;
+  }
+  // Un conteneur `<div footer>` laisse ses boutons s'aligner comme s'ils étaient posés directement
+  .scrap-panel__foot > div[footer] {
+    display: contents;
+  }
+
+  // ------------------------------------------------------------
+  // Onglet du document ouvert
+  // ------------------------------------------------------------
+  .scrap-doctab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--scrap-space-2);
+    // In a grid, the tab keeps the width of its name rather than the column's.
+    justify-self: start;
+    max-width: 100%;
+    height: 34px;
+    padding: 0 var(--scrap-space-4);
+    border: 1px solid var(--scrap-line);
+    border-bottom: 0;
+    border-radius: var(--scrap-radius-m) var(--scrap-radius-m) 0 0;
+    background: var(--scrap-surface);
+    color: var(--scrap-ink);
+    font-size: var(--scrap-fs-s);
+    font-weight: var(--scrap-weight-strong);
+    white-space: nowrap;
+  }
+  .scrap-doctab__name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .scrap-doctab__dot {
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--scrap-accent);
+  }
+}

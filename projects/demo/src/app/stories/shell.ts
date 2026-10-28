@@ -2,11 +2,13 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import {
   ScrapButton,
   ScrapCommands,
+  ScrapDocTab,
   ScrapIcon,
   ScrapIconButton,
   ScrapMenu,
   ScrapMenuItem,
   ScrapMenuTrigger,
+  ScrapPanel,
   ScrapProp,
   ScrapProps,
   ScrapShell,
@@ -63,6 +65,8 @@ const ZONES = [
     ScrapProps,
     ScrapProp,
     ScrapTimecode,
+    ScrapPanel,
+    ScrapDocTab,
   ],
   template: `
     <story-page
@@ -113,6 +117,7 @@ const ZONES = [
               <scrap-tree label="Fichiers" [nodes]="files" [(selected)]="file" />
             </nav>
             <section scrapShellMain class="work" aria-label="Zone de travail">
+              <scrap-doc-tab modified>moteur.wav</scrap-doc-tab>
               <scrap-toolbar label="Lecture">
                 <button scrap-icon-button label="Lire" shortcut="space">
                   <scrap-icon name="play" />
@@ -123,13 +128,18 @@ const ZONES = [
               <scrap-wave-bars [data]="broken" [altered]="zones" label="Piste B" />
             </section>
             @if (aside()) {
-              <aside scrapShellAside class="inspector" aria-label="Inspecteur">
-                <h2>Passe 3</h2>
-                <dl scrap-props>
-                  <div scrap-prop label="Opérateur">Écho</div>
-                  <div scrap-prop label="Zone">4,6 à 6,4 s</div>
-                  <div scrap-prop label="Densité">35 %</div>
-                </dl>
+              <aside scrapShellAside aria-label="Inspecteur">
+                <scrap-panel title="Passe 3">
+                  <dl scrap-props>
+                    <div scrap-prop label="Opérateur">Écho</div>
+                    <div scrap-prop label="Zone">4,6 à 6,4 s</div>
+                    <div scrap-prop label="Densité">35 %</div>
+                  </dl>
+                  <div footer>
+                    <button scrap-button variant="secondary" size="s">Annuler</button>
+                    <button scrap-button size="s">Détruire</button>
+                  </div>
+                </scrap-panel>
               </aside>
             }
             <scrap-statusbar scrapShellStatus>
@@ -186,13 +196,6 @@ const ZONES = [
       align-content: start;
       gap: var(--scrap-space-3);
       padding: var(--scrap-space-3);
-    }
-    .inspector {
-      padding: var(--scrap-space-3) var(--scrap-space-4);
-    }
-    .inspector h2 {
-      margin: 0 0 var(--scrap-space-2);
-      font: var(--scrap-weight-strong) var(--scrap-fs-l) / 1.3 var(--scrap-font-display);
     }
   `,
 })

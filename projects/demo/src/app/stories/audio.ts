@@ -11,6 +11,8 @@ import {
   ScrapHistory,
   ScrapLane,
   ScrapMarker,
+  ScrapRangeSlider,
+  ScrapRuler,
   ScrapSegment,
   ScrapSegmented,
   ScrapTimeline,
@@ -44,6 +46,8 @@ const ZONES = [
     ScrapTimeline,
     ScrapLane,
     ScrapMarker,
+    ScrapRangeSlider,
+    ScrapRuler,
     ScrapHistory,
     ScrapSegmented,
     ScrapSegment,
@@ -107,6 +111,45 @@ const ZONES = [
         <p class="readout">{{ selectionText() }}</p>
       </story-case>
 
+      <story-case
+        name="Timeline zoomée"
+        note="view donne la fenêtre visible&nbsp;: la règle se gradue sur elle, et ce qui en sort est masqué. Les pistes reçoivent les données de la fenêtre."
+        [stack]="true"
+      >
+        <scrap-range-slider
+          label="Fenêtre visible"
+          showValue
+          unit="s"
+          [min]="0"
+          [max]="duration"
+          [step]="0.1"
+          [(low)]="zoomFrom"
+          [(high)]="zoomTo"
+        />
+        <scrap-timeline
+          [duration]="duration"
+          [view]="zoomView()"
+          [(selection)]="selection"
+          [(playhead)]="time"
+        >
+          <scrap-lane label="A"><scrap-wave-bars [data]="zoomLane()" /></scrap-lane>
+          <scrap-lane label="B"
+            ><scrap-wave-bars [data]="zoomLaneBroken()" [altered]="zoomZones()"
+          /></scrap-lane>
+          @for (zone of zones; track $index) {
+            <scrap-marker [at]="zone[0] * duration">{{ $index + 1 }}</scrap-marker>
+          }
+        </scrap-timeline>
+      </story-case>
+
+      <story-case
+        name="Règle seule"
+        note="Pour graduer une vue dessinée à part, un canvas ou une bande de vignettes."
+        [stack]="true"
+      >
+        <scrap-ruler class="ruler" [start]="zoomFrom()" [end]="zoomTo()" />
+      </story-case>
+
       <story-case name="Oscilloscope et VU-mètre" [stack]="true">
         <scrap-wave-line [data]="scope()" />
         <scrap-vu-meter class="vu" [level]="0.72" />
@@ -129,6 +172,10 @@ const ZONES = [
   styles: `
     .vu {
       width: 12rem;
+    }
+    .ruler {
+      border: 1px solid var(--scrap-line);
+      border-radius: var(--scrap-radius-m);
     }
     .readout {
       margin: 0;
@@ -153,6 +200,26 @@ export class AudioStory {
   readonly selection = signal<ScrapTimeRange | null>([0.6, 2.2]);
   readonly scope = signal(oscillo(96));
   readonly head = signal(3);
+
+  readonly zoomFrom = signal(1.6);
+  readonly zoomTo = signal(3.2);
+  readonly zoomView = computed<ScrapTimeRange>(() => [this.zoomFrom(), this.zoomTo()]);
+  readonly zoomLane = computed(() => this.sliceToView(this.lane));
+  readonly zoomLaneBroken = computed(() => this.sliceToView(this.laneBroken));
+  /** Les zones détruites, ramenées des fractions du fichier à celles de la fenêtre. */
+  readonly zoomZones = computed(() => {
+    const [from, to] = this.zoomView();
+    const toView = (f: number) => (f * DURATION - from) / (to - from);
+    return ZONES.map(([a, b]) => [Math.max(0, toView(a)), Math.min(1, toView(b))] as const).filter(
+      ([a, b]) => b > a,
+    );
+  });
+
+  private sliceToView(data: readonly number[]): readonly number[] {
+    const [from, to] = this.zoomView();
+    const n = data.length;
+    return data.slice(Math.floor((from / DURATION) * n), Math.ceil((to / DURATION) * n));
+  }
 
   readonly history: ScrapHistoryItem[] = [
     { label: 'Ouverture de moteur.wav', meta: '10:02', icon: 'file', kind: 'open' },

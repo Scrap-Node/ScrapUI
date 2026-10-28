@@ -12,6 +12,28 @@ si l'API TypeScript ne bouge pas.
 
 ## [Non publié]
 
+## [0.5.0] — 2026-10-28
+
+### Ajouté
+
+- `scrap-timeline` : `view` donne la fenêtre visible, pour zoomer. La règle,
+  le pointeur, la zone et les repères s'y rapportent ; la tête de lecture et
+  les repères qui en sortent sont masqués, la zone est coupée à ses bords. Les
+  pistes montrent ce qu'on leur passe : leur donner les données de la fenêtre.
+- `scrap-ruler` : la règle de la timeline, seule, pour graduer une vue
+  dessinée à part (un canvas, une bande de vignettes). Elle descend jusqu'au
+  centième de seconde sur une fenêtre étroite.
+- `scrap-panel` : le panneau d'inspecteur, avec un titre et ses actions en
+  tête, des réglages qui défilent et un pied d'actions toujours visible.
+- `scrap-doc-tab` : l'onglet du document ouvert, avec une pastille cuivre
+  quand il est modifié.
+
+### Modifié
+
+- La règle de `scrap-timeline` est désormais un élément `scrap-ruler` (classe
+  `scrap-ruler` inchangée) au lieu d'une `div` : une surcharge écrite sur
+  `div.scrap-ruler` ne s'applique plus.
+
 ## [0.4.0] — 2026-10-19
 
 ### Ajouté

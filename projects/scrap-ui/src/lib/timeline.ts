@@ -16,16 +16,72 @@ export type ScrapTimeRange = readonly [start: number, end: number];
 const MIN_SELECTION = 0.05;
 /** Pixels de glissement avant de passer du clic à la sélection. */
 const DRAG_THRESHOLD = 4;
-const NICE_STEPS = [0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600];
+const NICE_STEPS = [
+  0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600,
+];
 
 const SECONDS = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
-const RULER = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
+const RULER_TENTHS = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
+const RULER_HUNDREDTHS = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
 
-function clockLabel(t: number): string {
-  if (t < 60) return `${RULER.format(t)} s`;
+function clockLabel(t: number, step: number): string {
+  if (t < 60) return `${(step < 0.1 ? RULER_HUNDREDTHS : RULER_TENTHS).format(t)} s`;
   const m = Math.floor(t / 60);
   const s = Math.round(t - m * 60);
   return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+interface RulerTick {
+  readonly t: number;
+  readonly left: number;
+  readonly major: boolean;
+  readonly label: string;
+}
+
+/** Graduations d'une fenêtre `[start, end[` : une principale tous les « pas ronds », une secondaire entre deux. */
+function rulerTicks(start: number, end: number): RulerTick[] {
+  const span = end - start;
+  if (!(span > 0)) return [];
+  const step = NICE_STEPS.find((s) => span / s <= 12) ?? NICE_STEPS.at(-1)!;
+  const minor = step / 2;
+  const out: RulerTick[] = [];
+  // Ticks are counted from 0, not from `start`, so that a major tick stays a
+  // multiple of the step wherever the window begins.
+  for (let i = Math.ceil(start / minor - 1e-9); i * minor < end - 1e-9; i++) {
+    const t = Number((i * minor).toFixed(6));
+    const major = i % 2 === 0;
+    out.push({
+      t,
+      left: Number((((t - start) / span) * 100).toFixed(4)),
+      major,
+      label: major ? clockLabel(t, step) : '',
+    });
+  }
+  return out;
+}
+
+/**
+ * Règle temporelle d'une fenêtre visible, en secondes. La timeline la pose
+ * d'elle-même ; seule, elle gradue une vue que l'on dessine soi-même (un
+ * canvas, une bande de vignettes).
+ *
+ * `<scrap-ruler [start]="debut()" [end]="fin()" />`
+ */
+@Component({
+  selector: 'scrap-ruler',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @for (tick of ticks(); track tick.t) {
+      <span [class.minor]="!tick.major" [style.left.%]="tick.left">{{ tick.label }}</span>
+    }
+  `,
+  host: { class: 'scrap-ruler', 'aria-hidden': 'true' },
+})
+export class ScrapRuler {
+  readonly start = input(0, { transform: numberAttribute });
+  readonly end = input.required({ transform: numberAttribute });
+
+  protected readonly ticks = computed(() => rulerTicks(this.start(), this.end()));
 }
 
 /**
@@ -62,6 +118,10 @@ export class ScrapLane {
  * </scrap-timeline>
  * ```
  *
+ * Pour zoomer, `view` donne la fenêtre visible : la règle, le pointeur et les
+ * repères s'y rapportent, et ce qui en sort est masqué. Les pistes montrent
+ * ce qu'on leur donne : leur passer les données de la fenêtre.
+ *
  * Un clic place la tête de lecture, un glissement sélectionne une zone. Au
  * clavier : les flèches déplacent la lecture d'un dixième de seconde, Pg↑
  * et Pg↓ d'une seconde, Origine et Fin vont aux extrémités ; avec ⇧, ces
@@ -70,25 +130,26 @@ export class ScrapLane {
 @Component({
   selector: 'scrap-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ScrapRuler],
   template: `
     <div class="scrap-timeline__row">
       <div class="scrap-ruler-corner"></div>
-      <div class="scrap-ruler" aria-hidden="true">
-        @for (tick of ticks(); track tick.t) {
-          <span [class.minor]="!tick.major" [style.left.%]="tick.left">{{ tick.label }}</span>
-        }
-      </div>
+      <scrap-ruler [start]="window()[0]" [end]="window()[1]" />
     </div>
     <ng-content select="scrap-lane" />
     <div class="scrap-timeline__overlay">
       <div
         class="scrap-selection"
-        [hidden]="!selection()"
-        [style.left.%]="selectionBox().left"
-        [style.width.%]="selectionBox().width"
+        [hidden]="!selectionBox()"
+        [style.left.%]="selectionBox()?.left"
+        [style.width.%]="selectionBox()?.width"
       ></div>
       <ng-content select="scrap-marker" />
-      <div class="scrap-playhead" [style.left.%]="toPercent(playhead())"></div>
+      <div
+        class="scrap-playhead"
+        [hidden]="!inView(playhead())"
+        [style.left.%]="toPercent(playhead())"
+      ></div>
     </div>
     <div
       class="scrap-timeline__hit"
@@ -115,6 +176,8 @@ export class ScrapTimeline {
   readonly playhead = model(0);
   /** Zone sélectionnée, en secondes ; `null` sans zone. */
   readonly selection = model<ScrapTimeRange | null>(null);
+  /** Fenêtre visible, en secondes ; `null` montre toute la durée. */
+  readonly view = input<ScrapTimeRange | null>(null);
   readonly label = input('Tête de lecture');
 
   private drag: { start: number; x: number; moved: boolean; rect: DOMRect; id: number } | null =
@@ -122,25 +185,16 @@ export class ScrapTimeline {
   /** Bord fixe de la sélection au clavier. */
   private anchor: number | null = null;
 
-  /** Graduations : une principale tous les « pas ronds », une secondaire entre deux. */
-  protected readonly ticks = computed(() => {
-    const d = this.duration();
-    if (!(d > 0)) return [];
-    const step = NICE_STEPS.find((s) => d / s <= 12) ?? NICE_STEPS.at(-1)!;
-    const minor = step / 2;
-    const out: { t: number; left: number; major: boolean; label: string }[] = [];
-    for (let i = 0; i * minor < d - 1e-9; i++) {
-      const t = i * minor;
-      const major = i % 2 === 0;
-      out.push({ t, left: (t / d) * 100, major, label: major ? clockLabel(t) : '' });
-    }
-    return out;
-  });
+  protected readonly window = computed<ScrapTimeRange>(() => this.view() ?? [0, this.duration()]);
 
+  /** La zone coupée aux bords de la fenêtre ; `null` si elle n'y paraît pas. */
   protected readonly selectionBox = computed(() => {
     const sel = this.selection();
-    if (!sel) return { left: 0, width: 0 };
-    const [a, b] = sel;
+    if (!sel) return null;
+    const [from, to] = this.window();
+    const a = Math.max(sel[0], from);
+    const b = Math.min(sel[1], to);
+    if (b <= a) return null;
     return { left: this.toPercent(a), width: this.toPercent(b) - this.toPercent(a) };
   });
 
@@ -151,10 +205,17 @@ export class ScrapTimeline {
     return `${at}, zone de ${SECONDS.format(sel[0])} à ${SECONDS.format(sel[1])} s`;
   });
 
-  /** Position en pourcentage de la durée, pour les repères. */
+  /** Position en pourcentage de la fenêtre visible, pour les repères ; hors de [0, 100] quand elle en sort. */
   toPercent(t: number): number {
-    const d = this.duration();
-    return d > 0 ? (Math.max(0, Math.min(d, t)) / d) * 100 : 0;
+    const [from, to] = this.window();
+    const at = Math.max(0, Math.min(this.duration(), t));
+    return to > from ? ((at - from) / (to - from)) * 100 : 0;
+  }
+
+  /** Vrai si l'instant `t` tombe dans la fenêtre visible. */
+  inView(t: number): boolean {
+    const [from, to] = this.window();
+    return t >= from && t <= to;
   }
 
   protected onPointerDown(event: PointerEvent): void {
@@ -253,9 +314,10 @@ export class ScrapTimeline {
   }
 
   private timeAt(clientX: number, rect: DOMRect): number {
-    const d = this.duration();
     if (!rect.width) return 0;
-    return Math.max(0, Math.min(d, ((clientX - rect.left) / rect.width) * d));
+    const [from, to] = this.window();
+    const t = from + ((clientX - rect.left) / rect.width) * (to - from);
+    return Math.max(0, Math.min(this.duration(), t));
   }
 }
 
@@ -270,6 +332,7 @@ export class ScrapTimeline {
   host: {
     class: 'scrap-marker',
     '[style.left.%]': 'timeline?.toPercent(at()) ?? 0',
+    '[hidden]': 'timeline ? !timeline.inView(at()) : false',
   },
 })
 export class ScrapMarker {
