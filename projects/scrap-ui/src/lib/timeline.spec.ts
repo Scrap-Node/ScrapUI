@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ScrapLane, ScrapMarker, ScrapTimeline, type ScrapTimeRange } from './timeline';
+import { ScrapLane, ScrapMarker, ScrapRuler, ScrapTimeline, type ScrapTimeRange } from './timeline';
 import { ScrapTimecode, ScrapTransport, formatClock } from './transport';
 import { ScrapWaveBars } from './waveform';
 import {
@@ -111,7 +111,12 @@ describe('ScrapTransport', () => {
 @Component({
   imports: [ScrapTimeline, ScrapLane, ScrapMarker, ScrapWaveBars],
   template: `
-    <scrap-timeline [duration]="duration()" [(selection)]="zone" [(playhead)]="position">
+    <scrap-timeline
+      [duration]="duration()"
+      [view]="view()"
+      [(selection)]="zone"
+      [(playhead)]="position"
+    >
       <scrap-lane label="A"><scrap-wave-bars [data]="peaks" /></scrap-lane>
       <scrap-lane label="B"><scrap-wave-bars [data]="peaks" [altered]="[[0.1, 0.3]]" /></scrap-lane>
       <scrap-marker [at]="1.6">1</scrap-marker>
@@ -120,6 +125,7 @@ describe('ScrapTransport', () => {
 })
 class TimelineHost {
   readonly duration = signal(6.4);
+  readonly view = signal<ScrapTimeRange | null>(null);
   readonly zone = signal<ScrapTimeRange | null>(null);
   readonly position = signal(0);
   readonly peaks = [0.2, 0.5, 0.8, 0.4];
@@ -225,6 +231,100 @@ describe('ScrapTimeline', () => {
     expect(hit().getAttribute('role')).toBe('slider');
     expect(hit().getAttribute('aria-valuemax')).toBe('6.4');
     expect(hit().getAttribute('aria-label')).toBe('Tête de lecture');
+  });
+
+  describe('avec une fenêtre visible', () => {
+    beforeEach(async () => {
+      fixture.componentInstance.view.set([2, 4]);
+      await fixture.whenStable();
+    });
+
+    it('gradue la règle sur la fenêtre, pas sur la durée', () => {
+      const labels = [...timeline().querySelectorAll('.scrap-ruler span:not(.minor)')].map((s) =>
+        s.textContent?.trim(),
+      );
+      expect(labels[0]).toBe('2 s');
+      expect(labels.at(-1)).toBe('3,8 s');
+    });
+
+    it('vise un temps de la fenêtre au clic', async () => {
+      pointer('pointerdown', 320);
+      pointer('pointerup', 320);
+      await fixture.whenStable();
+      expect(fixture.componentInstance.position()).toBeCloseTo(3);
+      const head = timeline().querySelector('.scrap-playhead') as HTMLElement;
+      expect(head.style.left).toBe('50%');
+      expect(head.hidden).toBe(false);
+    });
+
+    it('masque ce qui sort de la fenêtre, et coupe la zone à ses bords', async () => {
+      const head = timeline().querySelector('.scrap-playhead') as HTMLElement;
+      const marker = timeline().querySelector('scrap-marker') as HTMLElement;
+      expect(head.hidden).toBe(true);
+      expect(marker.hidden).toBe(true);
+
+      fixture.componentInstance.zone.set([1, 3]);
+      await fixture.whenStable();
+      const sel = timeline().querySelector('.scrap-selection') as HTMLElement;
+      expect(sel.hidden).toBe(false);
+      expect(sel.style.left).toBe('0%');
+      expect(sel.style.width).toBe('50%');
+
+      fixture.componentInstance.zone.set([5, 6]);
+      await fixture.whenStable();
+      expect(sel.hidden).toBe(true);
+    });
+  });
+});
+
+@Component({
+  imports: [ScrapRuler],
+  template: `<scrap-ruler [start]="start()" [end]="end()" />`,
+})
+class RulerHost {
+  readonly start = signal(0);
+  readonly end = signal(6.4);
+}
+
+describe('ScrapRuler', () => {
+  let fixture: ComponentFixture<RulerHost>;
+  const ruler = () => fixture.nativeElement.querySelector('scrap-ruler') as HTMLElement;
+  const majors = () =>
+    [...ruler().querySelectorAll('span:not(.minor)')].map((s) => ({
+      label: s.textContent?.trim(),
+      left: (s as HTMLElement).style.left,
+    }));
+
+  beforeEach(async () => {
+    fixture = TestBed.createComponent(RulerHost);
+    await fixture.whenStable();
+  });
+
+  it('se pose seule, hors de la timeline', () => {
+    expect(ruler().classList).toContain('scrap-ruler');
+    expect(ruler().getAttribute('aria-hidden')).toBe('true');
+    expect(majors()[0]).toEqual({ label: '0 s', left: '0%' });
+  });
+
+  it('commence à la première graduation ronde de la fenêtre', async () => {
+    fixture.componentInstance.start.set(1.3);
+    fixture.componentInstance.end.set(3.3);
+    await fixture.whenStable();
+    // pas de 0,2 s : 1,4 s tombe à 5 % d'une fenêtre de 2 s
+    expect(majors()[0]).toEqual({ label: '1,4 s', left: '5%' });
+  });
+
+  it('descend au centième quand la fenêtre est très étroite', async () => {
+    fixture.componentInstance.start.set(1);
+    fixture.componentInstance.end.set(1.2);
+    await fixture.whenStable();
+    expect(majors().map((m) => m.label)).toContain('1,02 s');
+  });
+
+  it('ne gradue rien sur une fenêtre vide', async () => {
+    fixture.componentInstance.end.set(0);
+    await fixture.whenStable();
+    expect(ruler().querySelectorAll('span')).toHaveLength(0);
   });
 });
 

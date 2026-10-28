@@ -311,7 +311,7 @@ test.describe('champ numérique', () => {
 test.describe('timeline', () => {
   test('un clic place la lecture, un glissement fait une zone', async ({ page }) => {
     await openStory(page, 'audio');
-    const hit = page.locator('.scrap-timeline__hit');
+    const hit = page.locator('.scrap-timeline__hit').first();
     const readout = page.getByText(/^(Zone de|Aucune zone)/);
     await expect(readout).toHaveText('Zone de 0,6 à 2,2 s');
 

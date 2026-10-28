@@ -146,7 +146,9 @@
   }
   .scrap-ruler {
     position: relative;
-    height: var(--ruler-h);
+    display: block;
+    // Outside a timeline, the ruler has no --ruler-h to inherit.
+    height: var(--ruler-h, 24px);
     overflow: hidden;
     background: var(--scrap-surface);
     color: var(--scrap-ink-faint);
@@ -159,7 +161,7 @@
     height: 100%;
     padding-left: 4px;
     border-left: 1px solid var(--scrap-line-strong);
-    line-height: calc(var(--ruler-h) - 8px);
+    line-height: calc(var(--ruler-h, 24px) - 8px);
     white-space: nowrap;
   }
   .scrap-ruler span.minor {

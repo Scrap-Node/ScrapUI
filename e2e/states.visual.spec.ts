@@ -150,7 +150,7 @@ for (const theme of THEMES) {
 
     test('zone sélectionnée dans la timeline', async ({ page }) => {
       await openStory(page, 'audio', theme);
-      const timeline = page.locator('scrap-timeline');
+      const timeline = page.locator('scrap-timeline').first();
       await timeline.locator('.scrap-timeline__hit').focus();
       await page.keyboard.press('Shift+PageUp');
       await expect(timeline).toHaveScreenshot(shot('timeline-zone', theme));
