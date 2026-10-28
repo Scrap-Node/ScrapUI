@@ -12,6 +12,8 @@ si l'API TypeScript ne bouge pas.
 
 ## [Non publié]
 
+## [0.5.0] — 2026-10-28
+
 ### Ajouté
 
 - `scrap-timeline` : `view` donne la fenêtre visible, pour zoomer. La règle,
