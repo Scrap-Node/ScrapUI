@@ -108,6 +108,48 @@ describe('ScrapTransport', () => {
   });
 });
 
+/** Un parent qui pilote la lecture, et dont la lecture peut échouer. */
+@Component({
+  imports: [ScrapTransport],
+  template: `<scrap-transport [playing]="playing()" (playingChange)="requests.push($event)" />`,
+})
+class ControlledTransportHost {
+  readonly playing = signal(false);
+  readonly requests: boolean[] = [];
+}
+
+describe('ScrapTransport piloté', () => {
+  let fixture: ComponentFixture<ControlledTransportHost>;
+  const play = () =>
+    fixture.nativeElement.querySelector('.scrap-transport__play') as HTMLButtonElement;
+
+  beforeEach(async () => {
+    fixture = TestBed.createComponent(ControlledTransportHost);
+    await fixture.whenStable();
+  });
+
+  it('demande la lecture sans se basculer lui-même', async () => {
+    play().click();
+    await fixture.whenStable();
+    expect(fixture.componentInstance.requests).toEqual([true]);
+    // la lecture n'a pas démarré : le bouton le dit, et un second clic redemande la lecture
+    expect(play().getAttribute('aria-label')).toBe('Lire');
+    play().click();
+    await fixture.whenStable();
+    expect(fixture.componentInstance.requests).toEqual([true, true]);
+  });
+
+  it("suit l'état que lui donne le parent", async () => {
+    fixture.componentInstance.playing.set(true);
+    await fixture.whenStable();
+    expect(play().getAttribute('aria-label')).toBe('Pause');
+    play().click();
+    await fixture.whenStable();
+    expect(fixture.componentInstance.requests).toEqual([false]);
+    expect(play().getAttribute('aria-label')).toBe('Pause');
+  });
+});
+
 @Component({
   imports: [ScrapTimeline, ScrapLane, ScrapMarker, ScrapWaveBars],
   template: `
