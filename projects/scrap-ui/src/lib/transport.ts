@@ -74,6 +74,12 @@ export class ScrapTimecode {
  *
  * Le bouton de lecture, à l'encre, est le plus grand : c'est la commande la
  * plus fréquente. Ce qui porte l'attribut `end` se range à droite.
+ *
+ * La lecture est pilotée par le parent : un clic émet `playingChange` avec
+ * l'état voulu, sans que le bouton change de lui-même. Il ne passe sur
+ * « Pause » que quand `playing` devient vrai : une lecture qui n'a pas pu
+ * démarrer le laisse sur « Lire ». `[(playing)]` suffit quand la bascule ne
+ * peut pas échouer.
  */
 @Component({
   selector: 'scrap-transport',
@@ -89,7 +95,7 @@ export class ScrapTimecode {
       class="scrap-transport__play"
       type="button"
       [attr.aria-label]="playing() ? 'Pause' : 'Lire'"
-      (click)="playing.set(!playing())"
+      (click)="playingChange.emit(!playing())"
     >
       <scrap-icon [name]="playing() ? 'pause' : 'play'" />
     </button>
@@ -105,7 +111,10 @@ export class ScrapTimecode {
   host: { class: 'scrap-transport' },
 })
 export class ScrapTransport {
-  readonly playing = model(false);
+  /** Lecture en cours, telle que le parent la constate. */
+  readonly playing = input(false);
+  /** Bascule demandée au clic : l'état voulu, l'inverse de `playing`. */
+  readonly playingChange = output<boolean>();
   readonly loop = model(false);
   /** Position de lecture, en secondes. */
   readonly time = input(0);

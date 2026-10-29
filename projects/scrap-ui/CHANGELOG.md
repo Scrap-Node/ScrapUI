@@ -12,6 +12,17 @@ si l'API TypeScript ne bouge pas.
 
 ## [Non publié]
 
+### Modifié
+
+- `scrap-transport` : le parent pilote la lecture. `playing` devient une
+  entrée, `playingChange` une sortie. Au clic, le bouton émet l'état voulu
+  sans changer de lui-même, et ne passe sur « Pause » que quand `playing`
+  devient vrai. Avant, il se basculait seul et restait sur « Pause » quand la
+  lecture échouait côté parent. `[(playing)]`, ou `[playing]` avec
+  `(playingChange)`, s'écrivent comme avant. Un code qui écrivait dans
+  `playing` (`transport.playing.set(…)`, pour rattraper ce décalage) ne
+  compile plus : retirer cette ligne. La boucle (`loop`) ne change pas.
+
 ## [0.5.0] — 2026-10-28
 
 ### Ajouté
