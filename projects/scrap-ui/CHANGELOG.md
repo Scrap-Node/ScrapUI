@@ -12,6 +12,8 @@ si l'API TypeScript ne bouge pas.
 
 ## [Non publié]
 
+## [0.6.0] — 2026-10-29
+
 ### Modifié
 
 - `scrap-transport` : le parent pilote la lecture. `playing` devient une
